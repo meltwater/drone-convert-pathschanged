@@ -15,7 +15,7 @@ steps:
     - push
     - tag
 
-- name: pull_request_amd64
+- name: docker_build
   image: plugins/docker:18
   settings:
     dry_run: true
