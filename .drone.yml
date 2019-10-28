@@ -9,6 +9,21 @@ steps:
   commands:
   - go test -v ./...
   - sh scripts/build.sh
+  when:
+    event:
+    - pull_request
+    - push
+    - tag
+
+- name: pull_request_amd64
+  image: plugins/docker:18
+  settings:
+    dry_run: true
+    dockerfile: docker/Dockerfile.linux.amd64
+    repo: meltwater/drone-convert-pathschanged
+  when:
+    event:
+    - pull_request
 
 trigger:
   branch:
