@@ -43,13 +43,3 @@ steps:
 trigger:
   branch:
   - master
-
----
-kind: secret
-name: docker_password
-data: ODs/NQbyVO3MWs4rFbj2qcYQmaoMAW9tnJPEfs5gmwKTQF6K8hHvOV0Nej/oFTmlU8TVwg==
-
----
-kind: secret
-name: docker_username
-data: ta1MaBGfEUop+p+izOnIl7thF6RQ62CGk5C0Af44msGeGiy8/MGcZ4Toyt3feOcF
