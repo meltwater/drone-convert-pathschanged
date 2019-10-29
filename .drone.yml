@@ -43,3 +43,4 @@ steps:
 trigger:
   branch:
   - master
+
