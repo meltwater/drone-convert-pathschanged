@@ -35,7 +35,6 @@ type (
 	}
 
 	conditions struct {
-		Event condition              `yaml:"event,omitempty"`
 		Paths condition              `yaml:"paths,omitempty"`
 		Attrs map[string]interface{} `yaml:",inline"`
 	}
@@ -96,6 +95,13 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 	data := req.Config.Data
 	resources, pathsSeen, err := parsePipelines(data, req.Build, req.Repo, p.token)
 	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"action":    req.Build.Action,
+			"after":     req.Build.After,
+			"before":    req.Build.Before,
+			"namespace": req.Repo.Namespace,
+			"name":      req.Repo.Name,
+		}).Errorln(err)
 		return nil, nil
 	}
 
