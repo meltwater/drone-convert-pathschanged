@@ -92,7 +92,11 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, token strin
 						"name":      repo.Name,
 					}).Infoln("excluding pipeline", resource.Attrs["name"])
 
-					resource.Trigger.Event.Exclude = []string{"*"}
+					// if only Trigger.Paths is set, Trigger.Attrs will be unset, so it must be initialized
+					if resource.Trigger.Attrs == nil {
+						resource.Trigger.Attrs = make(map[string]interface{})
+					}
+					resource.Trigger.Attrs["event"] = map[string][]string{"exclude": []string{"*"}}
 				}
 			}
 
@@ -135,7 +139,11 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, token strin
 							"name":      repo.Name,
 						}).Infoln("excluding step", step.Attrs["name"])
 
-						step.When.Event.Exclude = []string{"*"}
+						// if only When.Paths is set, When.Attrs will be unset, so it must be initialized
+						if step.When.Attrs == nil {
+							step.When.Attrs = make(map[string]interface{})
+						}
+						step.When.Attrs["event"] = map[string][]string{"exclude": []string{"*"}}
 					}
 				}
 			}
