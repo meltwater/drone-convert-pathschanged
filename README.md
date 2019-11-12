@@ -1,6 +1,6 @@
 [![Build Status](https://cloud.drone.io/api/badges/meltwater/drone-convert-pathschanged/status.svg)](https://cloud.drone.io/meltwater/drone-convert-pathschanged)
 
-A conversion extension to include/exclude pipelines and steps based on paths changed.
+A [Drone](https://drone.io/) conversion extension to include/exclude pipelines and steps based on paths changed.
 
 _Please note this project requires Drone server version 1.4 or higher._
 
