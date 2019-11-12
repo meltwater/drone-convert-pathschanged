@@ -98,6 +98,7 @@ steps:
 
 When using [`depends_on`](https://docker-runner.docs.drone.io/configuration/parallelism/) in a pipeline step, ensure the `paths` rules match, otherwise your steps may run out of order.
 
+Only run two steps when `README.md` is changed, one after the other:
 ```yaml
 ---
 kind: pipeline
