@@ -36,6 +36,8 @@ DRONE_CONVERT_PLUGIN_SECRET=bea26a2221fd8090ea38720fc445eca6
 
 This extension uses [doublestar](https://github.com/bmatcuk/doublestar) for matching paths changed in your commit range, refer to their documentation for all supported patterns.
 
+### `include`
+
 Only run a pipeline when `README.md` is changed:
 ```yaml
 ---
@@ -71,6 +73,8 @@ steps:
       - README.md
 ```
 
+### `include` and `exclude`
+
 Run a pipeline step when `.yml` files are changed in the root, except for `.drone.yml`:
 ```yaml
 ---
@@ -88,4 +92,36 @@ steps:
       - "*.yml"
       exclude:
       - .drone.yml
+```
+
+### `depends_on`
+
+When using [`depends_on`](https://docker-runner.docs.drone.io/configuration/parallelism/) in a pipeline step, ensure the `paths` rules match, otherwise your steps may run out of order.
+
+Only run two steps when `README.md` is changed, one after the other:
+```yaml
+---
+kind: pipeline
+name: depends_on
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "README.md was changed”
+  when:
+    paths:
+      include:
+      - README.md
+
+- name: depends_on_message
+  depends_on:
+  - message
+  image: busybox
+  commands:
+  - echo "This step runs after the message step"
+  when:
+    paths:
+      include:
+      - README.md
 ```
