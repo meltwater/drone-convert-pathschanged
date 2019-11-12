@@ -34,7 +34,7 @@ DRONE_CONVERT_PLUGIN_SECRET=bea26a2221fd8090ea38720fc445eca6
 
 ## Examples
 
-This extension uses (doublestar)[https://github.com/bmatcuk/doublestar] for matching paths changed in your commit range, refer to their documentation for all supported patterns.
+This extension uses [doublestar](https://github.com/bmatcuk/doublestar) for matching paths changed in your commit range, refer to their documentation for all supported patterns.
 
 Only run a pipeline when `README.md` is changed:
 ```yaml
