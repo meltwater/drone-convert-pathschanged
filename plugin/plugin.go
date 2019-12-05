@@ -85,22 +85,27 @@ func New(token string) converter.Plugin {
 func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Config, error) {
 
 	logrus.WithFields(logrus.Fields{
-		"action":    req.Build.Action,
-		"after":     req.Build.After,
-		"before":    req.Build.Before,
-		"namespace": req.Repo.Namespace,
-		"name":      req.Repo.Name,
+		"build_action":   req.Build.Action,
+		"build_after":    req.Build.After,
+		"build_before":   req.Build.Before,
+		"build_id":       req.Build.ID,
+		"build_number":   req.Build.Number,
+		"build_parent":   req.Build.Parent,
+		"build_source":   req.Build.Source,
+		"build_ref":      req.Build.Ref,
+		"build_target":   req.Build.Target,
+		"build_trigger":  req.Build.Trigger,
+		"repo_namespace": req.Repo.Namespace,
+		"repo_name":      req.Repo.Name,
 	}).Infoln("initiated")
 
 	data := req.Config.Data
 	resources, pathsSeen, err := parsePipelines(data, req.Build, req.Repo, p.token)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"action":    req.Build.Action,
-			"after":     req.Build.After,
-			"before":    req.Build.Before,
-			"namespace": req.Repo.Namespace,
-			"name":      req.Repo.Name,
+			"build_id":       req.Build.ID,
+			"repo_namespace": req.Repo.Namespace,
+			"repo_name":      req.Repo.Name,
 		}).Errorln(err)
 		return nil, nil
 	}
@@ -108,11 +113,9 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 	var config string
 	if pathsSeen {
 		logrus.WithFields(logrus.Fields{
-			"action":    req.Build.Action,
-			"after":     req.Build.After,
-			"before":    req.Build.Before,
-			"namespace": req.Repo.Namespace,
-			"name":      req.Repo.Name,
+			"build_id":       req.Build.ID,
+			"repo_namespace": req.Repo.Namespace,
+			"repo_name":      req.Repo.Name,
 		}).Infoln("paths fields were seen, marshaling config")
 
 		c, err := marshal(resources)
@@ -122,11 +125,9 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 		config = string(c)
 	} else {
 		logrus.WithFields(logrus.Fields{
-			"action":    req.Build.Action,
-			"after":     req.Build.After,
-			"before":    req.Build.Before,
-			"namespace": req.Repo.Namespace,
-			"name":      req.Repo.Name,
+			"build_id":       req.Build.ID,
+			"repo_namespace": req.Repo.Namespace,
+			"repo_name":      req.Repo.Name,
 		}).Infoln("no paths fields seen, no marshaling necessary")
 
 		config = data

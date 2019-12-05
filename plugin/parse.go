@@ -72,11 +72,9 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, token strin
 					got, want := resource.Trigger.Paths.match(p), true
 					if got == want {
 						logrus.WithFields(logrus.Fields{
-							"action":    build.Action,
-							"after":     build.After,
-							"before":    build.Before,
-							"namespace": repo.Namespace,
-							"name":      repo.Name,
+							"build_id":       build.ID,
+							"repo_namespace": repo.Namespace,
+							"repo_name":      repo.Name,
 						}).Infoln("including pipeline", resource.Attrs["name"])
 
 						skipPipeline = false
@@ -85,11 +83,9 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, token strin
 				}
 				if skipPipeline {
 					logrus.WithFields(logrus.Fields{
-						"action":    build.Action,
-						"after":     build.After,
-						"before":    build.Before,
-						"namespace": repo.Namespace,
-						"name":      repo.Name,
+						"build_id":       build.ID,
+						"repo_namespace": repo.Namespace,
+						"repo_name":      repo.Name,
 					}).Infoln("excluding pipeline", resource.Attrs["name"])
 
 					// if only Trigger.Paths is set, Trigger.Attrs will be unset, so it must be initialized
@@ -119,11 +115,9 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, token strin
 						got, want := step.When.Paths.match(i), true
 						if got == want {
 							logrus.WithFields(logrus.Fields{
-								"action":    build.Action,
-								"after":     build.After,
-								"before":    build.Before,
-								"namespace": repo.Namespace,
-								"name":      repo.Name,
+								"build_id":       build.ID,
+								"repo_namespace": repo.Namespace,
+								"repo_name":      repo.Name,
 							}).Infoln("including step", step.Attrs["name"])
 
 							skipStep = false
@@ -132,11 +126,9 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, token strin
 					}
 					if skipStep {
 						logrus.WithFields(logrus.Fields{
-							"action":    build.Action,
-							"after":     build.After,
-							"before":    build.Before,
-							"namespace": repo.Namespace,
-							"name":      repo.Name,
+							"build_id":       build.ID,
+							"repo_namespace": repo.Namespace,
+							"repo_name":      repo.Name,
 						}).Infoln("excluding step", step.Attrs["name"])
 
 						// if only When.Paths is set, When.Attrs will be unset, so it must be initialized
