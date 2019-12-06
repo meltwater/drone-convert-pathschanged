@@ -88,6 +88,7 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 		"build_action":   req.Build.Action,
 		"build_after":    req.Build.After,
 		"build_before":   req.Build.Before,
+		"build_event":    req.Build.Event,
 		"build_id":       req.Build.ID,
 		"build_number":   req.Build.Number,
 		"build_parent":   req.Build.Parent,
