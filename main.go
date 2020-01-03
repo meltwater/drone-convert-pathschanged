@@ -5,6 +5,7 @@
 package main
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/drone/drone-go/plugin/converter"
@@ -61,5 +62,11 @@ func main() {
 	logrus.Infof("server listening on address %s", spec.Bind)
 
 	http.Handle("/", handler)
+	http.HandleFunc("/healthz", healthz)
 	logrus.Fatal(http.ListenAndServe(spec.Bind, nil))
+}
+
+func healthz(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	io.WriteString(w, "OK")
 }
