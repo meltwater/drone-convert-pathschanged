@@ -40,3 +40,21 @@ func getFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string
 
 	return files, nil
 }
+
+func apiRateLimit ()
+    newctx := context.Background()
+    ts := oauth2.StaticTokenSource(
+	&oauth2.Token{AccessToken: token},
+    )
+    tc := oauth2.NewClient(newctx, ts)
+
+	client := github.NewClient(tc)
+	
+	rateLimit, _, err := client.RateLimits(newctx)
+	if err != nil {
+		fmt.Printf("Promblem getting github rate limit info %v\n", err)
+		return
+	}
+	GithubApiCount = (rateLimit.Core.Limit - rateLimit.Core.Remaining)
+    return GithubApiCount, nil
+}
