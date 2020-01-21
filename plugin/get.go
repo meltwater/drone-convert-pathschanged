@@ -41,7 +41,7 @@ func getFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string
 	return files, nil
 }
 
-func apiRateLimit ()
+func apiRateLimit () {
     newctx := context.Background()
     ts := oauth2.StaticTokenSource(
 	&oauth2.Token{AccessToken: token},
