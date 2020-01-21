@@ -52,9 +52,8 @@ func apiRateLimit (token string) ([]string, error) {
 	
 	rateLimit, _, err := client.RateLimits(newctx)
 	if err != nil {
-		fmt.Printf("Promblem getting github rate limit info %v\n", err)
-		return
+		return nil, err
 	}
-	GithubApiCount = (rateLimit.Core.Limit - rateLimit.Core.Remaining)
+	GithubApiCount = rateLimit.Core.Remaining
     return GithubApiCount, nil
 }
