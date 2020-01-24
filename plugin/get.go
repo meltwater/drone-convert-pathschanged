@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/drone/drone-go/drone"
-
+	"github.com/meltwater/drone-convert-pathschanged/metric"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 )
@@ -41,7 +41,7 @@ func getFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string
 	return files, nil
 }
 
-func apiRateLimit (token string) ([]string, error) {
+func apiRateLimit(token string) (int, error) {
     newctx := context.Background()
     ts := oauth2.StaticTokenSource(
 	&oauth2.Token{AccessToken: token},
@@ -52,8 +52,9 @@ func apiRateLimit (token string) ([]string, error) {
 	
 	rateLimit, _, err := client.RateLimits(newctx)
 	if err != nil {
-		return nil, err
+		return 1, err
 	}
-	GithubApiCount = rateLimit.Core.Remaining
-    return GithubApiCount, nil
+	gitApiCalls := rateLimit.Core.Remaining
+	metric.GithubApiCount.Add(float64(gitApiCalls))
+	return gitApiCalls, nil
 }

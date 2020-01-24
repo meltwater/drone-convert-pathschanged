@@ -10,7 +10,7 @@ import (
 
 	"github.com/drone/drone-go/plugin/converter"
 	"github.com/meltwater/drone-convert-pathschanged/plugin"
-	"github.com/meltwater/drone-convert-pathschanged/metric"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/kelseyhightower/envconfig"
@@ -65,9 +65,7 @@ func main() {
 	http.Handle("/", handler)
 	http.HandleFunc("/healthz", healthz)
 	logrus.Fatal(http.ListenAndServe(spec.Bind, nil))
-	
-	githubapiHandler := metric.GithubApiCalls()
-	http.Handle("/githubapi", githubapiHandler)
+	http.Handle("/metrics", promhttp.Handler())
 }
 
 func healthz(w http.ResponseWriter, r *http.Request) {
