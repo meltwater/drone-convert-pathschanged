@@ -32,8 +32,8 @@ type spec struct {
 var (
 	    githubApiCount = prometheus.NewGauge(
 	    prometheus.GaugeOpts{
-			   Name: "github_api_calls",
-			   Help: "Total number of github api calls per hour",
+			   Name: "github_api_calls_remaining",
+			   Help: "Total number of github api calls per hour remaining",
 	},)
 ) 
 func main() {
@@ -98,7 +98,7 @@ func ApiRateLimit(token string) {
 		if err != nil {
 			logrus.Fatalln("No metrics")
 		}
-		githubApiCount.Set(float64(rateLimit.Core.Limit - rateLimit.Core.Remaining))
+		githubApiCount.Set(float64(rateLimit.Core.Remaining))
 
 	}()
 }
