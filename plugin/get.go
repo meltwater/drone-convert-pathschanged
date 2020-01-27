@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/drone/drone-go/drone"
-
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 )
