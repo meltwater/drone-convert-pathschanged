@@ -6,17 +6,14 @@ package main
 
 import (
 	"io"
-	"context"
 	"net/http"
-    "github.com/google/go-github/github"
-	"golang.org/x/oauth2"
 	"github.com/drone/drone-go/plugin/converter"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/meltwater/drone-convert-pathschanged/plugin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/sirupsen/logrus"
+
 )
 
 // spec provides the plugin settings.
@@ -29,13 +26,6 @@ type spec struct {
 	Token string `envconfig:"GITHUB_TOKEN"`
 }
 
-var (
-	    githubApiCount = prometheus.NewGauge(
-	    prometheus.GaugeOpts{
-			   Name: "github_api_calls_remaining",
-			   Help: "Total number of github api calls per hour remaining",
-	},)
-) 
 func main() {
 	spec := new(spec)
 	err := envconfig.Process("", spec)
@@ -70,35 +60,14 @@ func main() {
 	)
 	
 	logrus.Infof("server listening on address %s", spec.Bind)
-	ApiRateLimit(spec.Token)
 	
 	http.Handle("/", handler)
 	http.HandleFunc("/healthz", healthz)
-	http.Handle("/metrics", promhttp.Handler())
-	prometheus.MustRegister(githubApiCount)
+	http.Handle("/metrics", promhttp.Handler())	
 	logrus.Fatal(http.ListenAndServe(spec.Bind, nil))
 }
 
 func healthz(w http.ResponseWriter, r *http.Request) {
  	w.Header().Set("Content-Type", "text/plain")
 	io.WriteString(w, "OK")
-}
-
-func ApiRateLimit(token string) {
-	go func() {
-		newctx := context.Background()
-		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: token},
-		)
-		tc := oauth2.NewClient(newctx, ts)
-		
-		client := github.NewClient(tc)
-			
-		rateLimit,_,err:= client.RateLimits(newctx)
-		if err != nil {
-			logrus.Fatalln("No metrics")
-		}
-		githubApiCount.Set(float64(rateLimit.Core.Remaining))
-
-	}()
 }
