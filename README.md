@@ -127,3 +127,39 @@ steps:
       include:
       - README.md
 ```
+
+## Known issues
+
+### YAML anchors
+
+There is a problem in the YAML library where ordering matters during unmarshaling, see https://github.com/meltwater/drone-convert-pathschanged/issues/18
+
+This syntax will fail:
+
+```yaml
+anchor: &anchor
+  image: busybox
+  settings:
+    foo: bar
+
+- name: test
+  <<: *anchor
+  when:
+    event: push
+    branch: master
+```
+
+But this will succeed:
+
+```yaml
+anchor: &anchor
+  image: busybox
+  settings:
+    foo: bar
+
+- <<: *anchor 
+  name: test
+  when:
+    event: push
+    branch: master
+```
