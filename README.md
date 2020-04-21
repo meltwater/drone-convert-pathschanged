@@ -6,7 +6,7 @@ _Please note this project requires Drone server version 1.4 or higher._
 
 ## Installation
 
-1. Create a github token via https://github.com/settings/tokens with the scope of`repo:status`.
+1. Create a github token via https://github.com/settings/tokens with the scope of`repo` (see [issue 13](https://github.com/meltwater/drone-convert-pathschanged/issues/13) for background).
 
 2. Create a shared secret:
 
