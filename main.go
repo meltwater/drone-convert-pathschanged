@@ -22,7 +22,7 @@ type spec struct {
 	Debug  bool   `envconfig:"DRONE_DEBUG"`
 	Text   bool   `envconfig:"DRONE_LOGS_TEXT"`
 	Secret string `envconfig:"DRONE_SECRET"`
-
+        Server string `envconfig:"GITHUB_SERVER"`
 	Token string `envconfig:"GITHUB_TOKEN"`
 }
 
@@ -54,6 +54,7 @@ func main() {
 	handler := converter.Handler(
 		plugin.New(
 			spec.Token,
+			spec.Server,
 		),
 		spec.Secret,
 		logrus.StandardLogger(),

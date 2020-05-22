@@ -10,14 +10,25 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func getFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string, error) {
+func getFilesChanged(repo drone.Repo, build drone.Build, token string, server string) ([]string, error) {
 	newctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
 	)
-	tc := oauth2.NewClient(newctx, ts)
+	trans := oauth2.NewClient(newctx, ts)
 
-	client := github.NewClient(tc)
+	var client *github.Client
+
+	if server == "" {
+		client = github.NewClient(trans)
+	} else {
+		var err error
+		client, err = github.NewEnterpriseClient(server, server, trans)
+		if err != nil {
+			logrus.Errorf("Unable to connect to Github: '%v'", err)
+			return nil, err
+		}
+	}
 
 	var commitFiles []github.CommitFile
 	if build.Before == "" || build.Before == "0000000000000000000000000000000000000000" {

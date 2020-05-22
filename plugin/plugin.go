@@ -20,6 +20,7 @@ import (
 type (
 	plugin struct {
 		token string
+		server string
 	}
 
 	resource struct {
@@ -77,9 +78,10 @@ func marshal(in []*resource) ([]byte, error) {
 }
 
 // New returns a new conversion plugin.
-func New(token string) converter.Plugin {
+func New(token string, server string) converter.Plugin {
 	return &plugin{
 		token: token,
+		server: server,
 	}
 }
 
@@ -102,7 +104,7 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 	}).Infoln("initiated")
 
 	data := req.Config.Data
-	resources, pathsSeen, err := parsePipelines(data, req.Build, req.Repo, p.token)
+	resources, pathsSeen, err := parsePipelines(data, req.Build, req.Repo, p.token, p.server)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"build_id":       req.Build.ID,
