@@ -44,12 +44,6 @@ func getFilesChanged(repo drone.Repo, build drone.Build, token string, server st
 		}
 		commitFiles = response.Files
 	}
-    rateLimit, _,err := client.RateLimits(newctx)
-	if err != nil {
-		logrus.Fatalln("No metrics")
-	}
-	//metrics.GithubApiCount.Set(float64(rateLimit.Core.Remaining))
-    GithubApiCount.Set(float64(rateLimit.Core.Remaining))
 	var files []string
 	for _, f := range commitFiles {
 		files = append(files, *f.Filename)
