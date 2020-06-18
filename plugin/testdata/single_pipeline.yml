@@ -1,0 +1,9 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+trigger:
+  paths:
+    include:
+    - something

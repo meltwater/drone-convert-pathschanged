@@ -1,0 +1,50 @@
+// Copyright 2019 the Drone Authors. All rights reserved.
+// Use of this source code is governed by the Blue Oak Model License
+// that can be found in the LICENSE file.
+
+package plugin
+
+import (
+	"fmt"
+	"testing"
+
+	"github.com/google/go-cmp/cmp"
+)
+
+func TestPlugin(t *testing.T) {
+	tests := []struct {
+		data string
+		want []*resource
+	}{
+		//
+		// empty document returns nil resources.
+		//
+		{
+			data: "",
+			want: nil,
+		},
+		//
+		// single document files.
+		//
+		{
+			data: "kind: pipeline\nfoo: bar",
+			want: []*resource{
+				{Kind:"pipeline", Type:"", Steps:[]*step, Trigger:{Paths:{Exclude:[] Include:[]} Attrs:map[]} Attrs:map[foo:bar]},
+			},
+		},
+	}
+
+	for i, test := range tests {
+		name := fmt.Sprint(i)
+		t.Run(name, func(t *testing.T) {
+			got, err := parsePipelines(test.data)
+			if err != nil {
+				t.Error(err)
+			}
+			if diff := cmp.Diff(got, test.want); diff != "" {
+				t.Fail()
+				t.Log(diff)
+			}
+		})
+	}
+}
