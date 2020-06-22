@@ -2,11 +2,14 @@ kind: pipeline
 type: docker
 name: default
 
-steps:
-- name: message
-  image: busybox
+commands: &commands
   commands:
   - echo "This step will be excluded when README.md is changed"
+
+steps:
+- <<: *commands
+  name: message
+  image: busybox
   when:
     paths:
       exclude:

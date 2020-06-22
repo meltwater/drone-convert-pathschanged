@@ -2,7 +2,7 @@ kind: pipeline
 type: docker
 steps:
 - commands:
-  - echo "README.md was not changed"
+  - echo "This pipeline will be excluded when README.md is changed"
   image: busybox
   name: message
 trigger:

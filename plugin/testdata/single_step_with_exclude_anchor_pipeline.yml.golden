@@ -12,4 +12,7 @@ steps:
   - echo "This step will be excluded when README.md is changed"
   image: busybox
   name: message
+commands:
+  commands:
+  - echo "This step will be excluded when README.md is changed"
 name: default

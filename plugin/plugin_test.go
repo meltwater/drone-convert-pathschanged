@@ -118,6 +118,48 @@ func TestParsePipelinesStepPathExcludePipeline(t *testing.T) {
 	}
 }
 
+func TestParsePipelinesStepPathExcludeAnchorPipeline(t *testing.T) {
+	req := &converter.Request{
+		Build: drone.Build{},
+		Repo: drone.Repo{
+			Slug:   "somewhere/over-the-rainbow",
+			Config: ".drone.yml",
+		},
+	}
+
+	before, err := ioutil.ReadFile("testdata/single_step_with_exclude_anchor_pipeline.yml")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	after, err := ioutil.ReadFile("testdata/single_step_with_exclude_anchor_pipeline.yml.golden")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	data := string(before)
+
+	changedFiles := []string{"README.md"}
+	resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	c, err := marshal(resources)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	config := string(c)
+
+	if want, got := string(after), config; want != got {
+		t.Errorf("Want %v got %v", want, got)
+	}
+}
+
 func TestParsePipelinesTriggerPathExcludePipeline(t *testing.T) {
 	req := &converter.Request{
 		Build: drone.Build{},
