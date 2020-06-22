@@ -1,6 +1,5 @@
 package plugin
 
-// found  you
 import (
 	"github.com/drone/drone-go/drone"
 
