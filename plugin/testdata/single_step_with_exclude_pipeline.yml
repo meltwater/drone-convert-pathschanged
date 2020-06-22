@@ -1,0 +1,14 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "README.md was not changed"
+  when:
+    paths:
+      exclude:
+      - README.md

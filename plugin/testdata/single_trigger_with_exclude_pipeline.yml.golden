@@ -1,0 +1,15 @@
+kind: pipeline
+type: docker
+steps:
+- commands:
+  - echo "README.md was not changed"
+  image: busybox
+  name: message
+trigger:
+  paths:
+    exclude:
+    - README.md
+  event:
+    exclude:
+    - '*'
+name: default
