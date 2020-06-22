@@ -101,7 +101,10 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 	}).Infoln("initiated")
 
 	data := req.Config.Data
-	resources, pathsSeen, err := parsePipelines(data, req.Build, req.Repo, p.token)
+	var config string
+
+	// check for any Paths.Include/Exclude fields in Trigger or Steps
+	pathSeen, err := pathSeen(data)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"build_id":       req.Build.ID,
@@ -111,26 +114,45 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 		return nil, nil
 	}
 
-	var config string
-	if pathsSeen {
+	if pathSeen {
 		logrus.WithFields(logrus.Fields{
 			"build_id":       req.Build.ID,
 			"repo_namespace": req.Repo.Namespace,
 			"repo_name":      req.Repo.Name,
-		}).Infoln("paths fields were seen, marshaling config")
+		}).Infoln("a path field was seen")
+
+		changedFiles, err := getFilesChanged(req.Repo, req.Build, p.token)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"build_id":       req.Build.ID,
+				"repo_namespace": req.Repo.Namespace,
+				"repo_name":      req.Repo.Name,
+			}).Errorln(err)
+			return nil, nil
+		}
+
+		resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"build_id":       req.Build.ID,
+				"repo_namespace": req.Repo.Namespace,
+				"repo_name":      req.Repo.Name,
+			}).Errorln(err)
+			return nil, nil
+		}
 
 		c, err := marshal(resources)
 		if err != nil {
 			return nil, nil
 		}
 		config = string(c)
+
 	} else {
 		logrus.WithFields(logrus.Fields{
 			"build_id":       req.Build.ID,
 			"repo_namespace": req.Repo.Namespace,
 			"repo_name":      req.Repo.Name,
-		}).Infoln("no paths fields seen, no marshaling necessary")
-
+		}).Infoln("no paths fields seen")
 		config = data
 	}
 

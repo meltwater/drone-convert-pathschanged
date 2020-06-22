@@ -5,9 +5,9 @@ import (
 
 	"github.com/drone/drone-go/drone"
 	"github.com/google/go-github/github"
-	"golang.org/x/oauth2"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/oauth2"
 )
 
 func getFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string, error) {
@@ -33,12 +33,12 @@ func getFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string
 		}
 		commitFiles = response.Files
 	}
-    rateLimit, _,err := client.RateLimits(newctx)
+	rateLimit, _, err := client.RateLimits(newctx)
 	if err != nil {
 		logrus.Fatalln("No metrics")
 	}
 	//metrics.GithubApiCount.Set(float64(rateLimit.Core.Remaining))
-    GithubApiCount.Set(float64(rateLimit.Core.Remaining))
+	GithubApiCount.Set(float64(rateLimit.Core.Remaining))
 	var files []string
 	for _, f := range commitFiles {
 		files = append(files, *f.Filename)
@@ -49,11 +49,12 @@ func getFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string
 
 var (
 	GithubApiCount = prometheus.NewGauge(
-	prometheus.GaugeOpts{
-		   Name: "github_api_calls_remaining",
-		   Help: "Total number of github api calls per hour remaining",
-})
+		prometheus.GaugeOpts{
+			Name: "github_api_calls_remaining",
+			Help: "Total number of github api calls per hour remaining",
+		})
 )
-func init(){
-    prometheus.MustRegister(GithubApiCount)
+
+func init() {
+	prometheus.MustRegister(GithubApiCount)
 }
