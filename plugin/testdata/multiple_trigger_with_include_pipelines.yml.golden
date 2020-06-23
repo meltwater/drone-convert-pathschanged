@@ -1,0 +1,70 @@
+kind: pipeline
+type: ""
+steps:
+- commands:
+  - _scripts/inspect.sh networkredux/staging
+  image: meltwaterfoundation/drone-git
+  name: inspect
+- when:
+    event:
+    - pull_request
+    - push
+  commands:
+  - _scripts/verify.sh
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  name: verify
+- when:
+    event:
+    - push
+  commands:
+  - _scripts/deploy.sh networkredux/staging
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  name: deploy
+trigger:
+  paths:
+    include:
+    - networkredux/staging/**
+  branch:
+  - master
+  event:
+    exclude:
+    - '*'
+concurrency:
+  limit: 1
+name: networkredux/staging
+node:
+  datacenter: nr-staging
+---
+kind: pipeline
+type: ""
+steps:
+- commands:
+  - _scripts/inspect.sh basefarm/production
+  image: meltwaterfoundation/drone-git
+  name: inspect
+- when:
+    event:
+    - pull_request
+    - push
+  commands:
+  - _scripts/verify.sh
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  name: verify
+- when:
+    event:
+    - push
+  commands:
+  - _scripts/deploy.sh basefarm/production
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  name: deploy
+trigger:
+  paths:
+    include:
+    - basefarm/production/**
+  branch:
+  - master
+concurrency:
+  limit: 1
+name: basefarm/production
+node:
+  datacenter: bf-production

@@ -1,11 +1,34 @@
-// Copyright 2019 the Drone Authors. All rights reserved.
-// Use of this source code is governed by the Blue Oak Model License
-// that can be found in the LICENSE file.
-
 package plugin
 
-import "testing"
+import (
+	"context"
+	"testing"
 
-func TestPlugin(t *testing.T) {
-	t.Skip()
+	"github.com/drone/drone-go/drone"
+	"github.com/drone/drone-go/plugin/converter"
+)
+
+// empty context
+var noContext = context.Background()
+
+func TestPluginEmptyPipeline(t *testing.T) {
+	req := &converter.Request{
+		Build: drone.Build{},
+		Repo: drone.Repo{
+			Slug:   "somewhere/over-the-rainbow",
+			Config: ".drone.yml",
+		},
+	}
+
+	plugin := New("invalidtoken")
+
+	config, err := plugin.Convert(noContext, req)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if want, got := "", config.Data; want != got {
+		t.Errorf("Want %q got %q", want, got)
+	}
 }

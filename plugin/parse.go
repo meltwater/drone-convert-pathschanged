@@ -44,29 +44,46 @@ func (c *condition) excludes(v string) bool {
 	return false
 }
 
-func parsePipelines(data string, build drone.Build, repo drone.Repo, token string) ([]*resource, bool, error) {
+func pathSeen(data string) (bool, error) {
+	pathSeen := false
+	resources, err := unmarshal([]byte(data))
+	if err != nil {
+		return false, err
+	}
+
+	for _, resource := range resources {
+		switch resource.Kind {
+		case "pipeline":
+			if len(append(resource.Trigger.Paths.Include, resource.Trigger.Paths.Exclude...)) > 0 {
+				pathSeen = true
+				break
+			}
+			for _, step := range resource.Steps {
+				if step == nil {
+					continue
+				}
+				if len(append(step.When.Paths.Include, step.When.Paths.Exclude...)) > 0 {
+					pathSeen = true
+					break
+				}
+			}
+		}
+	}
+	return pathSeen, nil
+}
+
+func parsePipelines(data string, build drone.Build, repo drone.Repo, changedFiles []string) ([]*resource, error) {
 
 	resources, err := unmarshal([]byte(data))
 	if err != nil {
-		return nil, false, err
+		return nil, err
 	}
 
-	pathsSeen := false
-	checkedGithub := false
-	var changedFiles []string
 	for _, resource := range resources {
 		switch resource.Kind {
 		case "pipeline":
 			// there must be a better way to check whether paths.include or paths.exclude is set
 			if len(append(resource.Trigger.Paths.Include, resource.Trigger.Paths.Exclude...)) > 0 {
-				pathsSeen = true
-				if !checkedGithub {
-					changedFiles, err = getFilesChanged(repo, build, token)
-					if err != nil {
-						return nil, false, err
-					}
-					checkedGithub = true
-				}
 				skipPipeline := true
 				for _, p := range changedFiles {
 					got, want := resource.Trigger.Paths.match(p), true
@@ -102,14 +119,6 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, token strin
 				}
 				// there must be a better way to check whether paths.include or paths.exclude is set
 				if len(append(step.When.Paths.Include, step.When.Paths.Exclude...)) > 0 {
-					pathsSeen = true
-					if !checkedGithub {
-						changedFiles, err = getFilesChanged(repo, build, token)
-						if err != nil {
-							return nil, false, err
-						}
-						checkedGithub = true
-					}
 					skipStep := true
 					for _, i := range changedFiles {
 						got, want := step.When.Paths.match(i), true
@@ -141,5 +150,5 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, token strin
 			}
 		}
 	}
-	return resources, pathsSeen, nil
+	return resources, nil
 }

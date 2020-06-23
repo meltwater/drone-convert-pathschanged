@@ -1,0 +1,16 @@
+kind: pipeline
+type: docker
+name: default
+
+trigger:
+  paths:
+    include:
+    - CHANGELOG.md
+    exclude:
+    - README.md
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "CHANGELOG.md was changed, README.md was not changed"
