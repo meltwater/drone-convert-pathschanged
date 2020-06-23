@@ -6,7 +6,6 @@ require (
 	github.com/bmatcuk/doublestar v1.1.5
 	github.com/buildkite/yaml v2.1.0+incompatible
 	github.com/drone/drone-go v1.1.0
-	github.com/google/go-cmp v0.3.1
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/joho/godotenv v1.3.0
