@@ -4,10 +4,20 @@ type: docker
 name: default
 
 steps:
+- name: test
+  image: golang:1.12
+  commands:
+  - go test -coverprofile=cover.out -v ./...
+  - go tool cover -func=cover.out
+  when:
+    event:
+    - pull_request
+    - push
+    - tag
+
 - name: build
   image: golang:1.12
   commands:
-  - go test -v ./...
   - sh scripts/build.sh
   when:
     event:
@@ -45,6 +55,6 @@ trigger:
   - master
 ---
 kind: signature
-hmac: 57028d403d222462f90e926e3d5ed7d4689ec88bd1707736f8a8c6bab7adfad0
+hmac: 6ce420165039ac25964fe0ce2480e8232d7c57327fe5abf8652826810f17ae52
 
 ...
