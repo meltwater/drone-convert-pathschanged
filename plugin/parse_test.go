@@ -9,7 +9,6 @@ import (
 )
 
 // pathSeen tests
-
 func TestPathSeenEmptyPipeline(t *testing.T) {
 	before, err := ioutil.ReadFile("testdata/single_empty_pipeline.yml")
 	if err != nil {
