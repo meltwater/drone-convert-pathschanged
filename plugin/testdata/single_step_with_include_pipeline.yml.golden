@@ -1,0 +1,12 @@
+kind: pipeline
+type: docker
+steps:
+- when:
+    paths:
+      include:
+      - README.md
+  commands:
+  - echo "README.md was changed"
+  image: busybox
+  name: message
+name: default
