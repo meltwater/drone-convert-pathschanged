@@ -23,7 +23,8 @@ type spec struct {
 	Text   bool   `envconfig:"DRONE_LOGS_TEXT"`
 	Secret string `envconfig:"DRONE_SECRET"`
 
-	Token string `envconfig:"GITHUB_TOKEN"`
+	Provider string `envconfig:"PROVIDER"`
+	Token string `envconfig:"TOKEN"`
 }
 
 func main() {
@@ -47,6 +48,9 @@ func main() {
 	if spec.Token == "" {
 		logrus.Fatalln("missing token")
 	}
+	if spec.Provider == "" {
+		logrus.Fatalln("missing provider")
+	}
 	if spec.Bind == "" {
 		spec.Bind = ":3000"
 	}
@@ -54,6 +58,7 @@ func main() {
 	handler := converter.Handler(
 		plugin.New(
 			spec.Token,
+			spec.Provider,
 		),
 		spec.Secret,
 		logrus.StandardLogger(),

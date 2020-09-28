@@ -2,15 +2,35 @@ package plugin
 
 import (
 	"context"
+	"fmt"
+	"github.com/ktrysmt/go-bitbucket"
 
 	"github.com/drone/drone-go/drone"
 	"github.com/google/go-github/github"
+	_ "github.com/ktrysmt/go-bitbucket"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 )
 
-func getFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string, error) {
+func getFilesChanged(repo drone.Repo, build drone.Build, token string, provider string) ([]string, error) {
+	if provider == "github" {
+		changedFiles, err := getGithubFilesChanged(repo, build, token)
+		if err != nil {
+			return nil, err
+		}
+		return changedFiles, nil
+	} else if provider == "bitbucket" {
+		changedFiles, err := getBBFilesChanged(repo, build, token)
+		if err != nil {
+			return nil, err
+		}
+		return changedFiles, nil
+	}
+	return nil, fmt.Errorf("unsupported provider %s", provider)
+}
+
+func getGithubFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string, error) {
 	newctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
@@ -44,6 +64,22 @@ func getFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string
 		files = append(files, *f.Filename)
 	}
 
+	return files, nil
+}
+
+func getBBFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string, error) {
+	var files []string
+	client := bitbucket.NewOAuthbearerToken(token)
+	diffOptions := &bitbucket.DiffOptions{
+		Owner:    repo.Namespace,
+		RepoSlug: repo.Name,
+		Spec:     fmt.Sprintf("%s...%s", build.Before, build.After),
+	}
+	diffs, err := client.Repositories.Diff.GetDiff(diffOptions)
+	if err != nil {
+		return nil, err
+	}
+	logrus.Info(diffs)
 	return files, nil
 }
 

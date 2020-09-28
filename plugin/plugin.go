@@ -19,6 +19,7 @@ import (
 type (
 	plugin struct {
 		token string
+		provider string
 	}
 
 	resource struct {
@@ -76,9 +77,10 @@ func marshal(in []*resource) ([]byte, error) {
 }
 
 // New returns a new conversion plugin.
-func New(token string) converter.Plugin {
+func New(token string, provider string) converter.Plugin {
 	return &plugin{
 		token: token,
+		provider: provider,
 	}
 }
 
@@ -121,7 +123,7 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 			"repo_name":      req.Repo.Name,
 		}).Infoln("a path field was seen")
 
-		changedFiles, err := getFilesChanged(req.Repo, req.Build, p.token)
+		changedFiles, err := getFilesChanged(req.Repo, req.Build, p.token, p.provider)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"build_id":       req.Build.ID,
