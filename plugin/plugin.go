@@ -18,7 +18,7 @@ import (
 
 type (
 	plugin struct {
-		token string
+		token    string
 		provider string
 	}
 
@@ -79,7 +79,7 @@ func marshal(in []*resource) ([]byte, error) {
 // New returns a new conversion plugin.
 func New(token string, provider string) converter.Plugin {
 	return &plugin{
-		token: token,
+		token:    token,
 		provider: provider,
 	}
 }
