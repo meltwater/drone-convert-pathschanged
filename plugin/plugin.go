@@ -20,6 +20,7 @@ type (
 	plugin struct {
 		token    string
 		provider string
+		bitbucketAddress string
 	}
 
 	resource struct {

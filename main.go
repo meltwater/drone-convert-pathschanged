@@ -25,6 +25,7 @@ type spec struct {
 
 	Provider string `envconfig:"PROVIDER"`
 	Token string `envconfig:"TOKEN"`
+	BitBucketAddress string `envconfig:"BB_ADDRESS"`
 }
 
 func main() {
@@ -50,6 +51,9 @@ func main() {
 	}
 	if spec.Provider == "" {
 		logrus.Fatalln("missing provider")
+	}
+	if spec.BitBucketAddress == "" && spec.Provider == "bitbucket-server" {
+		logrus.Fatalln("missing bitbucket server address")
 	}
 	if spec.Bind == "" {
 		spec.Bind = ":3000"

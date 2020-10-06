@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/drone/drone-go/drone"
 	bitbucketv1 "github.com/gfleury/go-bitbucket-v1"
+	"os"
 )
 
 type bitbucketDiffs struct {
@@ -18,12 +19,13 @@ type bitbucketDiffs struct {
 func GetBBFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string, error) {
 	var files []string
 	var ctx context.Context
+	bitbucketAddress := os.Getenv("BB_ADDRESS")
 	params := map[string]interface{}{
 		"since": build.Before,
 	}
 	ctx = context.WithValue(context.Background(), bitbucketv1.ContextAccessToken, token)
 
-	configuration := bitbucketv1.NewConfiguration("https://vrk-bitbucket-01.eden.csc.fi/rest")
+	configuration := bitbucketv1.NewConfiguration(bitbucketAddress)
 
 	client := bitbucketv1.NewAPIClient(ctx, configuration)
 
