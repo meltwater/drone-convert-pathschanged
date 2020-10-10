@@ -12,6 +12,9 @@ import (
 var noContext = context.Background()
 
 func TestPluginEmptyPipeline(t *testing.T) {
+
+	providers := []string{"github","bitbucket-server"}
+
 	req := &converter.Request{
 		Build: drone.Build{},
 		Repo: drone.Repo{
@@ -20,15 +23,17 @@ func TestPluginEmptyPipeline(t *testing.T) {
 		},
 	}
 
-	plugin := New("invalidtoken")
+	for _, provider := range providers {
+		plugin := New("invalidtoken", provider)
 
-	config, err := plugin.Convert(noContext, req)
-	if err != nil {
-		t.Error(err)
-		return
-	}
+		config, err := plugin.Convert(noContext, req)
+		if err != nil {
+			t.Error(err)
+			return
+		}
 
-	if want, got := "", config.Data; want != got {
-		t.Errorf("Want %q got %q", want, got)
+		if want, got := "", config.Data; want != got {
+			t.Errorf("Want %q got %q", want, got)
+		}
 	}
 }
