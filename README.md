@@ -37,6 +37,9 @@ DRONE_CONVERT_PLUGIN_SECRET=bea26a2221fd8090ea38720fc445eca6
 ```
 
 ## Bitbucket Server
+
+_Bitbucket Server support is currently considered experimental_
+
 1. Create a BitBucket access token via https://your-bitbucket-address/plugins/servlet/access-tokens/manage with read-only rights
 
 2. Create a shared secret:
