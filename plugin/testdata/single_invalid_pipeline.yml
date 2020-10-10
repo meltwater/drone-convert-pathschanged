@@ -1,5 +1,0 @@
-kind: pipeline
-type: docker
-name: default
-
-this_is_invalid_yaml
