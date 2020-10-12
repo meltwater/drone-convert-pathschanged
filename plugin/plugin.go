@@ -87,20 +87,22 @@ func New(token string, provider string) converter.Plugin {
 
 func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Config, error) {
 
-	logrus.WithFields(logrus.Fields{
-		"build_action":   req.Build.Action,
+	// set some default fields for logs
+	requestLogger := logrus.WithFields(logrus.Fields{
 		"build_after":    req.Build.After,
 		"build_before":   req.Build.Before,
-		"build_event":    req.Build.Event,
-		"build_id":       req.Build.ID,
-		"build_number":   req.Build.Number,
-		"build_parent":   req.Build.Parent,
-		"build_source":   req.Build.Source,
-		"build_ref":      req.Build.Ref,
-		"build_target":   req.Build.Target,
-		"build_trigger":  req.Build.Trigger,
 		"repo_namespace": req.Repo.Namespace,
 		"repo_name":      req.Repo.Name,
+	})
+
+	// initial log message with extra fields
+	requestLogger.WithFields(logrus.Fields{
+		"build_action":  req.Build.Action,
+		"build_event":   req.Build.Event,
+		"build_source":  req.Build.Source,
+		"build_ref":     req.Build.Ref,
+		"build_target":  req.Build.Target,
+		"build_trigger": req.Build.Trigger,
 	}).Infoln("initiated")
 
 	data := req.Config.Data
@@ -109,38 +111,22 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 	// check for any Paths.Include/Exclude fields in Trigger or Steps
 	pathSeen, err := pathSeen(data)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"build_id":       req.Build.ID,
-			"repo_namespace": req.Repo.Namespace,
-			"repo_name":      req.Repo.Name,
-		}).Errorln(err)
+		requestLogger.Errorln(err)
 		return nil, nil
 	}
 
 	if pathSeen {
-		logrus.WithFields(logrus.Fields{
-			"build_id":       req.Build.ID,
-			"repo_namespace": req.Repo.Namespace,
-			"repo_name":      req.Repo.Name,
-		}).Infoln("a path field was seen")
+		requestLogger.Infoln("a path field was seen")
 
 		changedFiles, err := getFilesChanged(req.Repo, req.Build, p.token, p.provider)
 		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"build_id":       req.Build.ID,
-				"repo_namespace": req.Repo.Namespace,
-				"repo_name":      req.Repo.Name,
-			}).Errorln(err)
+			requestLogger.Errorln(err)
 			return nil, nil
 		}
 
 		resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
 		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"build_id":       req.Build.ID,
-				"repo_namespace": req.Repo.Namespace,
-				"repo_name":      req.Repo.Name,
-			}).Errorln(err)
+			requestLogger.Errorln(err)
 			return nil, nil
 		}
 
@@ -151,11 +137,7 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 		config = string(c)
 
 	} else {
-		logrus.WithFields(logrus.Fields{
-			"build_id":       req.Build.ID,
-			"repo_namespace": req.Repo.Namespace,
-			"repo_name":      req.Repo.Name,
-		}).Infoln("no paths fields seen")
+		requestLogger.Infoln("no paths fields seen")
 		config = data
 	}
 

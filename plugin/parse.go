@@ -74,6 +74,14 @@ func pathSeen(data string) (bool, error) {
 
 func parsePipelines(data string, build drone.Build, repo drone.Repo, changedFiles []string) ([]*resource, error) {
 
+	// set some default fields for logs
+	requestLogger := logrus.WithFields(logrus.Fields{
+		"build_after":    build.After,
+		"build_before":   build.Before,
+		"repo_namespace": repo.Namespace,
+		"repo_name":      repo.Name,
+	})
+
 	resources, err := unmarshal([]byte(data))
 	if err != nil {
 		return nil, err
@@ -88,22 +96,14 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, changedFile
 				for _, p := range changedFiles {
 					got, want := resource.Trigger.Paths.match(p), true
 					if got == want {
-						logrus.WithFields(logrus.Fields{
-							"build_id":       build.ID,
-							"repo_namespace": repo.Namespace,
-							"repo_name":      repo.Name,
-						}).Infoln("including pipeline", resource.Attrs["name"])
+						requestLogger.Infoln("including pipeline", resource.Attrs["name"])
 
 						skipPipeline = false
 						break
 					}
 				}
 				if skipPipeline {
-					logrus.WithFields(logrus.Fields{
-						"build_id":       build.ID,
-						"repo_namespace": repo.Namespace,
-						"repo_name":      repo.Name,
-					}).Infoln("excluding pipeline", resource.Attrs["name"])
+					requestLogger.Infoln("excluding pipeline", resource.Attrs["name"])
 
 					// if only Trigger.Paths is set, Trigger.Attrs will be unset, so it must be initialized
 					if resource.Trigger.Attrs == nil {
@@ -123,22 +123,14 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, changedFile
 					for _, i := range changedFiles {
 						got, want := step.When.Paths.match(i), true
 						if got == want {
-							logrus.WithFields(logrus.Fields{
-								"build_id":       build.ID,
-								"repo_namespace": repo.Namespace,
-								"repo_name":      repo.Name,
-							}).Infoln("including step", step.Attrs["name"])
+							requestLogger.Infoln("including step", step.Attrs["name"])
 
 							skipStep = false
 							break
 						}
 					}
 					if skipStep {
-						logrus.WithFields(logrus.Fields{
-							"build_id":       build.ID,
-							"repo_namespace": repo.Namespace,
-							"repo_name":      repo.Name,
-						}).Infoln("excluding step", step.Attrs["name"])
+						requestLogger.Infoln("excluding step", step.Attrs["name"])
 
 						// if only When.Paths is set, When.Attrs will be unset, so it must be initialized
 						if step.When.Attrs == nil {

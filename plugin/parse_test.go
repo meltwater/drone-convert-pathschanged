@@ -1,7 +1,6 @@
 package plugin
 
 import (
-	"io/ioutil"
 	"testing"
 
 	"github.com/drone/drone-go/drone"
@@ -10,13 +9,13 @@ import (
 
 // pathSeen tests
 func TestPathSeenEmptyPipeline(t *testing.T) {
-	before, err := ioutil.ReadFile("testdata/single_empty_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
-	data := string(before)
+	data := `
+kind: pipeline
+type: docker
+name: default
+`
+
 	pathSeen, err := pathSeen(data)
 	if err != nil {
 		t.Error(err)
@@ -29,14 +28,16 @@ func TestPathSeenEmptyPipeline(t *testing.T) {
 }
 
 func TestPathSeenInvalidPipeline(t *testing.T) {
-	before, err := ioutil.ReadFile("testdata/single_invalid_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
-	data := string(before)
-	_, err = pathSeen(data)
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+this_is_invalid_yaml
+`
+
+	_, err := pathSeen(data)
 
 	if err == nil {
 		t.Errorf("Invalid pipeline did not return an error")
@@ -44,13 +45,23 @@ func TestPathSeenInvalidPipeline(t *testing.T) {
 }
 
 func TestPathSeenSingleStepPipeline(t *testing.T) {
-	before, err := ioutil.ReadFile("testdata/single_step_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
-	data := string(before)
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+trigger:
+  branch:
+  - master
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "hello"
+`
+
 	pathSeen, err := pathSeen(data)
 	if err != nil {
 		t.Error(err)
@@ -63,13 +74,23 @@ func TestPathSeenSingleStepPipeline(t *testing.T) {
 }
 
 func TestPathSeenStepPathIncludePipeline(t *testing.T) {
-	before, err := ioutil.ReadFile("testdata/single_step_with_include_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
-	data := string(before)
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "README.md was changed"
+  when:
+    paths:
+      include:
+      - README.md
+`
+
 	pathSeen, err := pathSeen(data)
 	if err != nil {
 		t.Error(err)
@@ -82,13 +103,24 @@ func TestPathSeenStepPathIncludePipeline(t *testing.T) {
 }
 
 func TestPathSeenStepPathExcludePipeline(t *testing.T) {
-	before, err := ioutil.ReadFile("testdata/single_step_with_exclude_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
-	data := string(before)
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+trigger:
+  paths:
+    exclude:
+    - README.md
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "This pipeline will be excluded when README.md is changed"
+`
+
 	pathSeen, err := pathSeen(data)
 	if err != nil {
 		t.Error(err)
@@ -101,13 +133,25 @@ func TestPathSeenStepPathExcludePipeline(t *testing.T) {
 }
 
 func TestPathSeenStepPathIncludeAndExcludePipeline(t *testing.T) {
-	before, err := ioutil.ReadFile("testdata/single_step_with_include_and_exclude_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
-	data := string(before)
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "CHANGELOG.md was changed, README.md was not changed"
+  when:
+    paths:
+      include:
+      - CHANGELOG.md
+      exclude:
+      - README.md
+`
+
 	pathSeen, err := pathSeen(data)
 	if err != nil {
 		t.Error(err)
@@ -120,13 +164,23 @@ func TestPathSeenStepPathIncludeAndExcludePipeline(t *testing.T) {
 }
 
 func TestPathSeenTriggerPathIncludePipeline(t *testing.T) {
-	before, err := ioutil.ReadFile("testdata/single_trigger_with_include_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
-	data := string(before)
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+trigger:
+  paths:
+    include:
+    - README.md
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "README.md was changed"
+`
 	pathSeen, err := pathSeen(data)
 	if err != nil {
 		t.Error(err)
@@ -139,13 +193,24 @@ func TestPathSeenTriggerPathIncludePipeline(t *testing.T) {
 }
 
 func TestPathSeenTriggerPathExcludePipeline(t *testing.T) {
-	before, err := ioutil.ReadFile("testdata/single_trigger_with_exclude_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
-	data := string(before)
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+trigger:
+  paths:
+    exclude:
+    - README.md
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "This pipeline will be excluded when README.md is changed"
+`
+
 	pathSeen, err := pathSeen(data)
 	if err != nil {
 		t.Error(err)
@@ -158,13 +223,26 @@ func TestPathSeenTriggerPathExcludePipeline(t *testing.T) {
 }
 
 func TestPathSeenTriggerPathIncludeAndExcludePipeline(t *testing.T) {
-	before, err := ioutil.ReadFile("testdata/single_trigger_with_include_and_exclude_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
-	data := string(before)
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+trigger:
+  paths:
+    include:
+    - CHANGELOG.md
+    exclude:
+    - README.md
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "CHANGELOG.md was changed, README.md was not changed"
+`
+
 	pathSeen, err := pathSeen(data)
 	if err != nil {
 		t.Error(err)
@@ -186,22 +264,20 @@ func TestParsePipelinesEmptyPipeline(t *testing.T) {
 		},
 	}
 
-	before, err := ioutil.ReadFile("testdata/single_empty_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	before := `
+kind: pipeline
+type: docker
+name: default
+`
 
-	after, err := ioutil.ReadFile("testdata/single_empty_pipeline.yml.golden")
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	data := string(before)
+	// parsed pipelines don't have a leading newline...
+	after := `kind: pipeline
+type: docker
+name: default
+`
 
 	changedFiles := []string{"README.md"}
-	resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+	resources, err := parsePipelines(before, req.Build, req.Repo, changedFiles)
 	if err != nil {
 		t.Error(err)
 		return
@@ -214,7 +290,7 @@ func TestParsePipelinesEmptyPipeline(t *testing.T) {
 	}
 	config := string(c)
 
-	if want, got := string(after), config; want != got {
+	if want, got := after, config; want != got {
 		t.Errorf("Want %v got %v", want, got)
 	}
 }
@@ -228,22 +304,41 @@ func TestParsePipelinesStepPathExcludePipeline(t *testing.T) {
 		},
 	}
 
-	before, err := ioutil.ReadFile("testdata/single_step_with_exclude_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	before := `
+kind: pipeline
+type: docker
+name: default
 
-	after, err := ioutil.ReadFile("testdata/single_step_with_exclude_pipeline.yml.golden")
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	data := string(before)
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "This step will be excluded when README.md is changed"
+  when:
+    paths:
+      exclude:
+      - README.md
+`
+	// parsed pipelines don't have a leading newline...
+	after := `kind: pipeline
+type: docker
+steps:
+- when:
+    paths:
+      exclude:
+      - README.md
+    event:
+      exclude:
+      - '*'
+  commands:
+  - echo "This step will be excluded when README.md is changed"
+  image: busybox
+  name: message
+name: default
+`
 
 	changedFiles := []string{"README.md"}
-	resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+	resources, err := parsePipelines(before, req.Build, req.Repo, changedFiles)
 	if err != nil {
 		t.Error(err)
 		return
@@ -256,7 +351,7 @@ func TestParsePipelinesStepPathExcludePipeline(t *testing.T) {
 	}
 	config := string(c)
 
-	if want, got := string(after), config; want != got {
+	if want, got := after, config; want != got {
 		t.Errorf("Want %v got %v", want, got)
 	}
 }
@@ -270,22 +365,39 @@ func TestParsePipelinesStepPathIncludePipeline(t *testing.T) {
 		},
 	}
 
-	before, err := ioutil.ReadFile("testdata/single_step_with_include_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	before := `
+kind: pipeline
+type: docker
+name: default
 
-	after, err := ioutil.ReadFile("testdata/single_step_with_include_pipeline.yml.golden")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "This step will be included when README.md is changed"
+  when:
+    paths:
+      include:
+      - README.md
+`
 
-	data := string(before)
+	// parsed pipelines don't have a leading newline...
+	after := `kind: pipeline
+type: docker
+steps:
+- when:
+    paths:
+      include:
+      - README.md
+  commands:
+  - echo "This step will be included when README.md is changed"
+  image: busybox
+  name: message
+name: default
+`
 
 	changedFiles := []string{"README.md"}
-	resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+	resources, err := parsePipelines(before, req.Build, req.Repo, changedFiles)
 	if err != nil {
 		t.Error(err)
 		return
@@ -298,7 +410,7 @@ func TestParsePipelinesStepPathIncludePipeline(t *testing.T) {
 	}
 	config := string(c)
 
-	if want, got := string(after), config; want != got {
+	if want, got := after, config; want != got {
 		t.Errorf("Want %v got %v", want, got)
 	}
 }
@@ -312,22 +424,47 @@ func TestParsePipelinesStepPathExcludeAnchorPipeline(t *testing.T) {
 		},
 	}
 
-	before, err := ioutil.ReadFile("testdata/single_step_with_exclude_anchor_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	before := `
+kind: pipeline
+type: docker
+name: default
 
-	after, err := ioutil.ReadFile("testdata/single_step_with_exclude_anchor_pipeline.yml.golden")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+commands: &commands
+  commands:
+  - echo "This step will be excluded when README.md is changed"
 
-	data := string(before)
+steps:
+- <<: *commands
+  name: message
+  image: busybox
+  when:
+    paths:
+      exclude:
+      - README.md
+`
+
+	after := `kind: pipeline
+type: docker
+steps:
+- when:
+    paths:
+      exclude:
+      - README.md
+    event:
+      exclude:
+      - '*'
+  commands:
+  - echo "This step will be excluded when README.md is changed"
+  image: busybox
+  name: message
+commands:
+  commands:
+  - echo "This step will be excluded when README.md is changed"
+name: default
+`
 
 	changedFiles := []string{"README.md"}
-	resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+	resources, err := parsePipelines(before, req.Build, req.Repo, changedFiles)
 	if err != nil {
 		t.Error(err)
 		return
@@ -340,7 +477,7 @@ func TestParsePipelinesStepPathExcludeAnchorPipeline(t *testing.T) {
 	}
 	config := string(c)
 
-	if want, got := string(after), config; want != got {
+	if want, got := after, config; want != got {
 		t.Errorf("Want %v got %v", want, got)
 	}
 }
@@ -354,22 +491,42 @@ func TestParsePipelinesTriggerPathExcludePipeline(t *testing.T) {
 		},
 	}
 
-	before, err := ioutil.ReadFile("testdata/single_trigger_with_exclude_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	before := `
+kind: pipeline
+type: docker
+name: default
 
-	after, err := ioutil.ReadFile("testdata/single_trigger_with_exclude_pipeline.yml.golden")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+trigger:
+  paths:
+    exclude:
+    - README.md
 
-	data := string(before)
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "This pipeline will be excluded when README.md is changed"
+`
+
+	after := `kind: pipeline
+type: docker
+steps:
+- commands:
+  - echo "This pipeline will be excluded when README.md is changed"
+  image: busybox
+  name: message
+trigger:
+  paths:
+    exclude:
+    - README.md
+  event:
+    exclude:
+    - '*'
+name: default
+`
 
 	changedFiles := []string{"README.md"}
-	resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+	resources, err := parsePipelines(before, req.Build, req.Repo, changedFiles)
 	if err != nil {
 		t.Error(err)
 		return
@@ -382,7 +539,7 @@ func TestParsePipelinesTriggerPathExcludePipeline(t *testing.T) {
 	}
 	config := string(c)
 
-	if want, got := string(after), config; want != got {
+	if want, got := after, config; want != got {
 		t.Errorf("Want %v got %v", want, got)
 	}
 }
@@ -396,22 +553,39 @@ func TestParsePipelinesTriggerPathIncludePipeline(t *testing.T) {
 		},
 	}
 
-	before, err := ioutil.ReadFile("testdata/single_trigger_with_include_pipeline.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	before := `
+kind: pipeline
+type: docker
+name: default
 
-	after, err := ioutil.ReadFile("testdata/single_trigger_with_include_pipeline.yml.golden")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+trigger:
+  paths:
+    include:
+    - README.md
 
-	data := string(before)
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "README.md was changed"
+`
+
+	after := `kind: pipeline
+type: docker
+steps:
+- commands:
+  - echo "README.md was changed"
+  image: busybox
+  name: message
+trigger:
+  paths:
+    include:
+    - README.md
+name: default
+`
 
 	changedFiles := []string{"README.md"}
-	resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+	resources, err := parsePipelines(before, req.Build, req.Repo, changedFiles)
 	if err != nil {
 		t.Error(err)
 		return
@@ -424,7 +598,7 @@ func TestParsePipelinesTriggerPathIncludePipeline(t *testing.T) {
 	}
 	config := string(c)
 
-	if want, got := string(after), config; want != got {
+	if want, got := after, config; want != got {
 		t.Errorf("Want %v got %v", want, got)
 	}
 }
@@ -438,22 +612,165 @@ func TestParsePipelinesMultipleTriggerPathIncludePipelines(t *testing.T) {
 		},
 	}
 
-	before, err := ioutil.ReadFile("testdata/multiple_trigger_with_include_pipelines.yml")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	before := `
+kind: pipeline
+name: networkredux/staging
 
-	after, err := ioutil.ReadFile("testdata/multiple_trigger_with_include_pipelines.yml.golden")
-	if err != nil {
-		t.Error(err)
-		return
-	}
+node:
+  datacenter: nr-staging
 
-	data := string(before)
+concurrency:
+  limit: 1
+
+steps:
+
+- name: inspect
+  image: meltwaterfoundation/drone-git
+  commands:
+  - _scripts/inspect.sh networkredux/staging
+
+- name: verify
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  commands:
+  - _scripts/verify.sh
+  when:
+    event:
+    - pull_request
+    - push
+
+- name: deploy
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  commands:
+  - _scripts/deploy.sh networkredux/staging
+  when:
+    event:
+    - push
+
+trigger:
+  paths:
+    include:
+    - networkredux/staging/**
+  branch:
+  - master
+
+---
+kind: pipeline
+name: basefarm/production
+
+node:
+  datacenter: bf-production
+
+concurrency:
+  limit: 1
+
+steps:
+
+- name: inspect
+  image: meltwaterfoundation/drone-git
+  commands:
+  - _scripts/inspect.sh basefarm/production
+
+- name: verify
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  commands:
+  - _scripts/verify.sh
+  when:
+    event:
+    - pull_request
+    - push
+
+- name: deploy
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  commands:
+  - _scripts/deploy.sh basefarm/production
+  when:
+    event:
+    - push
+
+trigger:
+  paths:
+    include:
+    - basefarm/production/**
+  branch:
+  - master
+
+...
+`
+
+	after := `kind: pipeline
+type: ""
+steps:
+- commands:
+  - _scripts/inspect.sh networkredux/staging
+  image: meltwaterfoundation/drone-git
+  name: inspect
+- when:
+    event:
+    - pull_request
+    - push
+  commands:
+  - _scripts/verify.sh
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  name: verify
+- when:
+    event:
+    - push
+  commands:
+  - _scripts/deploy.sh networkredux/staging
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  name: deploy
+trigger:
+  paths:
+    include:
+    - networkredux/staging/**
+  branch:
+  - master
+  event:
+    exclude:
+    - '*'
+concurrency:
+  limit: 1
+name: networkredux/staging
+node:
+  datacenter: nr-staging
+---
+kind: pipeline
+type: ""
+steps:
+- commands:
+  - _scripts/inspect.sh basefarm/production
+  image: meltwaterfoundation/drone-git
+  name: inspect
+- when:
+    event:
+    - pull_request
+    - push
+  commands:
+  - _scripts/verify.sh
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  name: verify
+- when:
+    event:
+    - push
+  commands:
+  - _scripts/deploy.sh basefarm/production
+  image: meltwaterfoundation/drone-lighter:0.21.0
+  name: deploy
+trigger:
+  paths:
+    include:
+    - basefarm/production/**
+  branch:
+  - master
+concurrency:
+  limit: 1
+name: basefarm/production
+node:
+  datacenter: bf-production
+`
 
 	changedFiles := []string{"basefarm/production/foundation/globals.yml"}
-	resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+	resources, err := parsePipelines(before, req.Build, req.Repo, changedFiles)
 	if err != nil {
 		t.Error(err)
 		return
@@ -466,7 +783,7 @@ func TestParsePipelinesMultipleTriggerPathIncludePipelines(t *testing.T) {
 	}
 	config := string(c)
 
-	if want, got := string(after), config; want != got {
+	if want, got := after, config; want != got {
 		t.Errorf("Want %v got %v", want, got)
 	}
 }
