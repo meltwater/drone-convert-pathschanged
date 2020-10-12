@@ -2,8 +2,9 @@ package providers
 
 import (
 	"context"
+
 	"github.com/drone/drone-go/drone"
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v32/github"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
@@ -18,7 +19,7 @@ func GetGithubFilesChanged(repo drone.Repo, build drone.Build, token string) ([]
 
 	client := github.NewClient(tc)
 
-	var commitFiles []github.CommitFile
+	var commitFiles []*github.CommitFile
 	if build.Before == "" || build.Before == "0000000000000000000000000000000000000000" {
 		response, _, err := client.Repositories.GetCommit(newctx, repo.Namespace, repo.Name, build.After)
 		if err != nil {

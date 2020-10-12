@@ -8,7 +8,7 @@ require (
 	github.com/drone/drone-go v1.1.0
 	github.com/gfleury/go-bitbucket-v1 v0.0.0-20200810125852-15f2a16ca820
 	github.com/google/go-github v17.0.0+incompatible
-	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/google/go-github/v32 v32.1.0
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/ktrysmt/go-bitbucket v0.6.4
