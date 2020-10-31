@@ -1,0 +1,98 @@
+{
+  "sha": "6ee3cf41d995a79857e0db41c47bf619e6546571",
+  "node_id": "MDY6Q29tbWl0MjE4MTM4MzkyOjZlZTNjZjQxZDk5NWE3OTg1N2UwZGI0MWM0N2JmNjE5ZTY1NDY1NzE=",
+  "commit": {
+    "author": {
+      "name": "Jim Sheldon",
+      "email": "jim.sheldon@meltwater.com",
+      "date": "2019-10-28T20:59:21Z"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "date": "2019-10-28T20:59:21Z"
+    },
+    "message": "adding .drone.yml",
+    "tree": {
+      "sha": "a2607ed28fd4adc037ff2ca4753f4241340947d8",
+      "url": "https://api.github.com/repos/meltwater/drone-convert-pathschanged/git/trees/a2607ed28fd4adc037ff2ca4753f4241340947d8"
+    },
+    "url": "https://api.github.com/repos/meltwater/drone-convert-pathschanged/git/commits/6ee3cf41d995a79857e0db41c47bf619e6546571",
+    "comment_count": 0,
+    "verification": {
+      "verified": true,
+      "reason": "valid",
+      "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJdt1apCRBK7hj4Ov3rIwAAdHIIACrjNDJt5i5hWfT5dY27k5BQ\nOEsjorbIv3UjAwpuZ4gBx6n7tzon3oYRPV0EFUSR+wrP1+ovGJSoe74j63IXNaq2\nvusBA+76mObYm+iiWFuW6Niaq8liOp5cp/NCokbCrpgZgNVfvPrn9VAurKZhZ2vJ\nMsIcGdmcWcZTo3oMLevaOhaioAyyPqohUGIvLBob7klhJmdGE5VcQK9GsLL4V0eH\ng19jAQ/z3wjAw2cUw/6+wp9YyfiqCqx5VmmRZClPf1inzmxNnzopWC8/DvXjt2H1\n0IU6IIUJOnWZK6CtZuhdegC5oRoJPpWhRsF94KfDQS2ki5mN9fQzVaN+kuS8Ob4=\n=JqAh\n-----END PGP SIGNATURE-----\n",
+      "payload": "tree a2607ed28fd4adc037ff2ca4753f4241340947d8\nparent 496eb80334e84085426ce681407d770cc9247acd\nauthor Jim Sheldon <jim.sheldon@meltwater.com> 1572296361 -0400\ncommitter GitHub <noreply@github.com> 1572296361 -0400\n\nadding .drone.yml"
+    }
+  },
+  "url": "https://api.github.com/repos/meltwater/drone-convert-pathschanged/commits/6ee3cf41d995a79857e0db41c47bf619e6546571",
+  "html_url": "https://github.com/meltwater/drone-convert-pathschanged/commit/6ee3cf41d995a79857e0db41c47bf619e6546571",
+  "comments_url": "https://api.github.com/repos/meltwater/drone-convert-pathschanged/commits/6ee3cf41d995a79857e0db41c47bf619e6546571/comments",
+  "author": {
+    "login": "jimsheldon",
+    "id": 1428961,
+    "node_id": "MDQ6VXNlcjE0Mjg5NjE=",
+    "avatar_url": "https://avatars0.githubusercontent.com/u/1428961?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/jimsheldon",
+    "html_url": "https://github.com/jimsheldon",
+    "followers_url": "https://api.github.com/users/jimsheldon/followers",
+    "following_url": "https://api.github.com/users/jimsheldon/following{/other_user}",
+    "gists_url": "https://api.github.com/users/jimsheldon/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/jimsheldon/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/jimsheldon/subscriptions",
+    "organizations_url": "https://api.github.com/users/jimsheldon/orgs",
+    "repos_url": "https://api.github.com/users/jimsheldon/repos",
+    "events_url": "https://api.github.com/users/jimsheldon/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/jimsheldon/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "web-flow",
+    "id": 19864447,
+    "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+    "avatar_url": "https://avatars3.githubusercontent.com/u/19864447?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/web-flow",
+    "html_url": "https://github.com/web-flow",
+    "followers_url": "https://api.github.com/users/web-flow/followers",
+    "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+    "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+    "organizations_url": "https://api.github.com/users/web-flow/orgs",
+    "repos_url": "https://api.github.com/users/web-flow/repos",
+    "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/web-flow/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "sha": "496eb80334e84085426ce681407d770cc9247acd",
+      "url": "https://api.github.com/repos/meltwater/drone-convert-pathschanged/commits/496eb80334e84085426ce681407d770cc9247acd",
+      "html_url": "https://github.com/meltwater/drone-convert-pathschanged/commit/496eb80334e84085426ce681407d770cc9247acd"
+    }
+  ],
+  "stats": {
+    "total": 15,
+    "additions": 15,
+    "deletions": 0
+  },
+  "files": [
+    {
+      "sha": "919c5c9dd4c751276f820cc0e69f17c80913b06a",
+      "filename": ".drone.yml",
+      "status": "added",
+      "additions": 15,
+      "deletions": 0,
+      "changes": 15,
+      "blob_url": "https://github.com/meltwater/drone-convert-pathschanged/blob/6ee3cf41d995a79857e0db41c47bf619e6546571/.drone.yml",
+      "raw_url": "https://github.com/meltwater/drone-convert-pathschanged/raw/6ee3cf41d995a79857e0db41c47bf619e6546571/.drone.yml",
+      "contents_url": "https://api.github.com/repos/meltwater/drone-convert-pathschanged/contents/.drone.yml?ref=6ee3cf41d995a79857e0db41c47bf619e6546571",
+      "patch": "@@ -0,0 +1,15 @@\n+---\n+kind: pipeline\n+type: docker\n+name: default\n+\n+steps:\n+- name: build\n+  image: golang:1.12\n+  commands:\n+  - go test -v ./...\n+  - sh scripts/build.sh\n+\n+trigger:\n+  branch:\n+  - master"
+    }
+  ]
+}
