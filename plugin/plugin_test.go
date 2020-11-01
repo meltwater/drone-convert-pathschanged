@@ -48,6 +48,82 @@ func TestNewEmptyPipeline(t *testing.T) {
 	}
 }
 
+func TestNewInvalidPipeline(t *testing.T) {
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+this_is_invalid_yaml
+`
+
+	req := &converter.Request{
+		Build: drone.Build{
+			Before: "",
+			After:  "6ee3cf41d995a79857e0db41c47bf619e6546571",
+		},
+		Config: drone.Config{
+			Data: data,
+		},
+		Repo: drone.Repo{
+			Namespace: "meltwater",
+			Name:      "drone-convert-pathschanged",
+			Slug:      "meltwater/drone-convert-pathschanged",
+			Config:    ".drone.yml",
+		},
+	}
+
+	plugin := New("invalidtoken", "")
+
+	_, err := plugin.Convert(noContext, req)
+	if err == nil {
+		t.Error("invalid pipeline did not return error")
+		return
+	}
+}
+
+func TestNewUnsupportedProvider(t *testing.T) {
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "This step will be excluded when .drone.yml is changed"
+  when:
+    paths:
+      exclude:
+      - .drone.yml
+`
+
+	req := &converter.Request{
+		Build: drone.Build{
+			Before: "",
+			After:  "6ee3cf41d995a79857e0db41c47bf619e6546571",
+		},
+		Config: drone.Config{
+			Data: data,
+		},
+		Repo: drone.Repo{
+			Namespace: "meltwater",
+			Name:      "drone-convert-pathschanged",
+			Slug:      "meltwater/drone-convert-pathschanged",
+			Config:    ".drone.yml",
+		},
+	}
+
+	plugin := New("invalidtoken", "unsupported")
+
+	_, err := plugin.Convert(noContext, req)
+	if err == nil {
+		t.Error("unsupported provider did not return error")
+		return
+	}
+}
+
 func TestNewGithubCommitExcludeStep(t *testing.T) {
 	gock.New("https://api.github.com").
 		Get("/repos/meltwater/drone-convert-pathschanged/commits/6ee3cf41d995a79857e0db41c47bf619e6546571").

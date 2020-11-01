@@ -7,6 +7,7 @@ package plugin
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 
 	"github.com/meltwater/drone-convert-pathschanged/providers"
@@ -114,40 +115,39 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 	pathSeen, err := pathSeen(data)
 	if err != nil {
 		requestLogger.Errorln(err)
-		return nil, nil
+		return nil, err
 	}
 
 	if pathSeen {
 		requestLogger.Infoln("a path field was seen")
 
 		var changedFiles []string
-		var err error
 
 		switch p.provider {
 		case "github":
 			changedFiles, err = providers.GetGithubFilesChanged(req.Repo, req.Build, p.token)
 			if err != nil {
-				return nil, nil
+				return nil, err
 			}
 		case "bitbucket-server":
 			changedFiles, err = providers.GetBBFilesChanged(req.Repo, req.Build, p.token)
 			if err != nil {
-				return nil, nil
+				return nil, err
 			}
 		default:
 			requestLogger.Errorln("unsupported provider: ", p.provider)
-			return nil, nil
+			return nil, errors.New("unsupported provider")
 		}
 
 		resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
 		if err != nil {
 			requestLogger.Errorln(err)
-			return nil, nil
+			return nil, err
 		}
 
 		c, err := marshal(resources)
 		if err != nil {
-			return nil, nil
+			return nil, err
 		}
 		config = string(c)
 
