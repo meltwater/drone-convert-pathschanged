@@ -3,7 +3,6 @@ package providers
 import (
 	"context"
 	"net/http"
-	"strings"
 
 	"github.com/drone/drone-go/drone"
 	"github.com/drone/go-scm/scm"
@@ -27,12 +26,12 @@ func GetGithubFilesChanged(repo drone.Repo, build drone.Build, token string) ([]
 	var err error
 
 	if build.Before == "" || build.Before == scm.EmptyCommit {
-		changes, result, err = client.Git.ListChanges(newctx, strings.Join([]string{repo.Namespace, repo.Name}, "/"), build.After, scm.ListOptions{})
+		changes, result, err = client.Git.ListChanges(newctx, repo.Slug, build.After, scm.ListOptions{})
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		changes, result, err = client.Git.CompareChanges(newctx, strings.Join([]string{repo.Namespace, repo.Name}, "/"), build.Before, build.After, scm.ListOptions{})
+		changes, result, err = client.Git.CompareChanges(newctx, repo.Slug, build.Before, build.After, scm.ListOptions{})
 		if err != nil {
 			return nil, err
 		}

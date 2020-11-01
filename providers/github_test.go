@@ -5,8 +5,8 @@ import (
 
 	"github.com/drone/drone-go/drone"
 	"github.com/drone/drone-go/plugin/converter"
-	"github.com/google/go-cmp/cmp"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/h2non/gock"
 )
 
@@ -25,7 +25,7 @@ func TestGetGithubFilesChangedCommit(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		SetHeaders(mockHeaders).
-		File("testdata/commit.json")
+		File("testdata/github/commit.json")
 
 	req := &converter.Request{
 		Build: drone.Build{
@@ -62,7 +62,7 @@ func TestGetGithubFilesChangedCompare(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		SetHeaders(mockHeaders).
-		File("testdata/compare.json")
+		File("testdata/github/compare.json")
 
 	req := &converter.Request{
 		Build: drone.Build{

@@ -9,6 +9,8 @@ import (
 	"context"
 	"io"
 
+	"github.com/meltwater/drone-convert-pathschanged/providers"
+
 	"github.com/drone/drone-go/drone"
 	"github.com/drone/drone-go/plugin/converter"
 
@@ -18,8 +20,8 @@ import (
 
 type (
 	plugin struct {
-		token    string
-		provider string
+		token            string
+		provider         string
 		bitbucketAddress string
 	}
 
@@ -118,9 +120,22 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 	if pathSeen {
 		requestLogger.Infoln("a path field was seen")
 
-		changedFiles, err := getFilesChanged(req.Repo, req.Build, p.token, p.provider)
-		if err != nil {
-			requestLogger.Errorln(err)
+		var changedFiles []string
+		var err error
+
+		switch p.provider {
+		case "github":
+			changedFiles, err = providers.GetGithubFilesChanged(req.Repo, req.Build, p.token)
+			if err != nil {
+				return nil, nil
+			}
+		case "bitbucket-server":
+			changedFiles, err = providers.GetBBFilesChanged(req.Repo, req.Build, p.token)
+			if err != nil {
+				return nil, nil
+			}
+		default:
+			requestLogger.Errorln("unsupported provider: ", p.provider)
 			return nil, nil
 		}
 
