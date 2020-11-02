@@ -1,7 +1,5 @@
 [![Build Status](https://cloud.drone.io/api/badges/meltwater/drone-convert-pathschanged/status.svg)](https://cloud.drone.io/meltwater/drone-convert-pathschanged)
-[![codecov](https://codecov.io/gh/meltwater/drone-convert-pathschanged/branch/master/graph/badge.svg?token=HIj4TY3hx2)](https://codecov.io/gh/meltwater/drone-convert-pathschanged)
 [![Docker Pulls](https://img.shields.io/docker/pulls/meltwater/drone-convert-pathschanged)](https://hub.docker.com/r/meltwater/drone-convert-pathschanged)
-
 
 A [Drone](https://drone.io/) [conversion extension](https://docs.drone.io/extensions/conversion/) to include/exclude pipelines and steps based on paths changed.
 
