@@ -5,14 +5,15 @@
 package main
 
 import (
+	"io"
+	"net/http"
+
 	"github.com/drone/drone-go/plugin/converter"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/meltwater/drone-convert-pathschanged/plugin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
-	"io"
-	"net/http"
 )
 
 // spec provides the plugin settings.
@@ -25,6 +26,15 @@ type spec struct {
 	Provider         string `envconfig:"PROVIDER"`
 	Token            string `envconfig:"TOKEN"`
 	BitBucketAddress string `envconfig:"BB_ADDRESS"`
+}
+
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
 }
 
 func main() {
@@ -50,6 +60,11 @@ func main() {
 	}
 	if spec.Provider == "" {
 		logrus.Fatalln("missing provider")
+	} else {
+		providers := []string{"bitbucket-server", "github"}
+		if !contains(providers, spec.Provider) {
+			logrus.Fatalln("invalid provider:", spec.Provider)
+		}
 	}
 	if spec.BitBucketAddress == "" && spec.Provider == "bitbucket-server" {
 		logrus.Fatalln("missing bitbucket server address")
