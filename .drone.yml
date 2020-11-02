@@ -15,6 +15,18 @@ steps:
     - push
     - tag
 
+- name: codecov
+  image: plugins/codecov
+  settings:
+    token:
+      from_secret: codecov_token
+    files:
+      - cover.out
+  when:
+    event:
+    - pull_request
+    - push
+
 - name: build
   image: golang:1.15
   commands:
