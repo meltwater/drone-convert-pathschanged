@@ -102,6 +102,34 @@ steps:
 	}
 }
 
+func TestPathSeenStepPathImplicitAndOptionalIncludePipeline(t *testing.T) {
+
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "README.md was changed"
+  when:
+    paths:
+      - README.md
+`
+
+	pathSeen, err := pathSeen(data)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if !pathSeen {
+		t.Errorf("Want 'true' got %t", pathSeen)
+	}
+}
+
 func TestPathSeenStepPathExcludePipeline(t *testing.T) {
 
 	data := `
@@ -189,6 +217,34 @@ steps:
 
 	if want, got := true, pathSeen; want != got {
 		t.Errorf("Want %t got %t", want, got)
+	}
+}
+
+func TestPathSeenTriggerPathImplicitAndOptionalIncludePipeline(t *testing.T) {
+
+	data := `
+kind: pipeline
+type: docker
+name: default
+
+trigger:
+  paths:
+    - README.md
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "README.md was changed"
+`
+	pathSeen, err := pathSeen(data)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if !pathSeen {
+		t.Errorf("Want 'true' got %t", pathSeen)
 	}
 }
 

@@ -50,6 +50,29 @@ type (
 	}
 )
 
+// UnmarshalYAML supports implicit and optional include
+func (c *condition) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var out1 string
+	var out2 []string
+	var out3 = struct {
+		Include []string
+		Exclude []string
+	}{}
+
+	if err := unmarshal(&out1); err == nil {
+		c.Include = []string{out1}
+		return nil
+	}
+
+	_ = unmarshal(&out2)
+	_ = unmarshal(&out3)
+
+	c.Exclude = out3.Exclude
+	c.Include = append(out3.Include, out2...)
+
+	return nil
+}
+
 func unmarshal(b []byte) ([]*resource, error) {
 	buf := bytes.NewBuffer(b)
 	res := []*resource{}
