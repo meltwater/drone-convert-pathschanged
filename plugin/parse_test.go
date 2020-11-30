@@ -471,6 +471,123 @@ name: default
 	}
 }
 
+func TestParsePipelinesStepPathImplicitAndOptionalIncludePipeline(t *testing.T) {
+	req := &converter.Request{
+		Build: drone.Build{},
+		Repo: drone.Repo{
+			Slug:   "somewhere/over-the-rainbow",
+			Config: ".drone.yml",
+		},
+	}
+
+	before := `
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "README.md was changed"
+  when:
+    paths:
+      - README.md
+`
+
+	// parsed pipelines don't have a leading newline...
+	after := `kind: pipeline
+type: docker
+steps:
+- when:
+    paths:
+      include:
+      - README.md
+  commands:
+  - echo "README.md was changed"
+  image: busybox
+  name: message
+name: default
+`
+
+	changedFiles := []string{"README.md"}
+	resources, err := parsePipelines(before, req.Build, req.Repo, changedFiles)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	c, err := marshal(resources)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	config := string(c)
+
+	if want, got := after, config; want != got {
+		t.Errorf("Want %v got %v", want, got)
+	}
+}
+
+func TestParsePipelinesTriggerPathImplicitAndOptionalIncludePipeline(t *testing.T) {
+	req := &converter.Request{
+		Build: drone.Build{},
+		Repo: drone.Repo{
+			Slug:   "somewhere/over-the-rainbow",
+			Config: ".drone.yml",
+		},
+	}
+
+	before := `
+kind: pipeline
+type: docker
+name: default
+
+trigger:
+  paths:
+    - README.md
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "README.md was changed"
+`
+
+	// parsed pipelines don't have a leading newline...
+	after := `kind: pipeline
+type: docker
+steps:
+- commands:
+  - echo "README.md was changed"
+  image: busybox
+  name: message
+trigger:
+  paths:
+    include:
+    - README.md
+name: default
+`
+
+	changedFiles := []string{"README.md"}
+	resources, err := parsePipelines(before, req.Build, req.Repo, changedFiles)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	c, err := marshal(resources)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	config := string(c)
+
+	if want, got := after, config; want != got {
+		t.Errorf("Want %v got %v", want, got)
+	}
+}
+
 func TestParsePipelinesStepPathExcludeAnchorPipeline(t *testing.T) {
 	req := &converter.Request{
 		Build: drone.Build{},
