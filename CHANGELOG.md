@@ -1,3 +1,9 @@
+## 0.3.0
+### Added
+- [#38](https://github.com/meltwater/drone-convert-pathschanged/pull/38) Make include implicit and is optional
+    - This addresses [#33](https://github.com/meltwater/drone-convert-pathschanged/issues/33) to make this plugin compatble with [`drone jsonnet`](https://docs.drone.io/pipeline/scripting/jsonnet/)
+- [#40](https://github.com/meltwater/drone-convert-pathschanged/pull/40) Additional tests
+
 ## 0.2.0
 ### Added
 - [#29](https://github.com/meltwater/drone-convert-pathschanged/pull/29) Initial experimental Bitbucket Server support.
