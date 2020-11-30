@@ -110,6 +110,22 @@ steps:
       - README.md
 ```
 
+Same as above, but with an implicit `include`:
+```yaml
+---
+kind: pipeline
+name: readme
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "README.md was changed”
+  when:
+    paths:
+    - README.md
+```
+
 ### `include` and `exclude`
 
 Run a pipeline step when `.yml` files are changed in the root, except for `.drone.yml`:
