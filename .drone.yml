@@ -25,7 +25,7 @@ steps:
     - push
     - tag
 
-- name: publish_dry_run
+- name: publish_amd64_dry_run
   image: plugins/docker:18
   settings:
     dry_run: true
@@ -35,11 +35,38 @@ steps:
     event:
     - pull_request
 
-- name: publish
+- name: publish_arm64_dry_run
+  image: plugins/docker:18
+  settings:
+    dry_run: true
+    dockerfile: docker/Dockerfile.linux.arm64
+    repo: meltwater/drone-convert-pathschanged
+  when:
+    event:
+    - pull_request
+
+- name: publish_amd64
   image: plugins/docker:18
   settings:
     auto_tag: true
+    auto_tag_suffix: linux-amd64
     dockerfile: docker/Dockerfile.linux.amd64
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: meltwater/drone-convert-pathschanged
+  when:
+    event:
+    - push
+    - tag
+
+- name: publish_arm64
+  image: plugins/docker:18
+  settings:
+    auto_tag: true
+    auto_tag_suffix: linux-arm64
+    dockerfile: docker/Dockerfile.linux.arm64
     username:
       from_secret: docker_username
     password:
