@@ -1,4 +1,4 @@
-image: drone/drone-convert-pathschanged:{{#if build.tag}}{{trimPrefix "v" build.tag}}{{else}}latest{{/if}}
+image: meltwater/drone-convert-pathschanged:{{#if build.tag}}{{trimPrefix "v" build.tag}}{{else}}latest{{/if}}
 {{#if build.tags}}
 tags:
 {{#each build.tags}}
@@ -7,12 +7,12 @@ tags:
 {{/if}}
 manifests:
   -
-    image: drone/drone-convert-pathschanged:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}linux-amd64
+    image: meltwater/drone-convert-pathschanged:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}linux-amd64
     platform:
       architecture: amd64
       os: linux
   -
-    image: drone/drone-convert-pathschanged:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}linux-arm64
+    image: meltwater/drone-convert-pathschanged:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}linux-arm64
     platform:
       architecture: arm64
       os: linux
