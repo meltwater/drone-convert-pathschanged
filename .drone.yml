@@ -77,11 +77,26 @@ steps:
     - push
     - tag
 
+- name: manifest
+  image: plugins/manifest
+  settings:
+    auto_tag: true
+    ignore_missing: true
+    spec: docker/manifest.tmpl
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  when:
+    event:
+    - push
+    - tag
+
 trigger:
   branch:
   - master
 ---
 kind: signature
-hmac: e2504063cc9d3a616b44668ce2352d5f364b543a3daef09bb282601f9e24d182
+hmac: 352688b762156350d298d0493ba2da21138d343460dab70eb1b1a4465e940244
 
 ...
