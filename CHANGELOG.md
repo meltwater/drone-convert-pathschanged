@@ -1,3 +1,7 @@
+## 0.3.1
+### Added
+- linux-arm64 build
+
 ## 0.3.0
 ### Added
 - [#38](https://github.com/meltwater/drone-convert-pathschanged/pull/38) Make include implicit and is optional
