@@ -22,6 +22,7 @@ github.com/drone/drone-go v1.1.0 h1:2mritc5b7PhQWvILNyzaImZMRWVbMmmZ5Q0UDwwO7SI=
 github.com/drone/drone-go v1.1.0/go.mod h1:GxyeGClYohaKNYJv/ZpsmVHtMJ7WhoT+uDaJNcDIrk4=
 github.com/drone/go-scm v1.7.1 h1:wME/n7Qdo70VJ+WXZanJHjLtNWONEfjNsO2iwHDdlkE=
 github.com/drone/go-scm v1.7.1/go.mod h1:lXwfbyrIJwFFME5TpzavkwO2T5X8yBK6t6cve7g91x0=
+github.com/drone/go-scm v1.8.0 h1:kDHu38a11loKf6uaBu75TmY1YPwsSaZdseET738Oy0o=
 github.com/gfleury/go-bitbucket-v1 v0.0.0-20200810125852-15f2a16ca820 h1:WZjcz0B/K3rhvsu2HAmFRpgChrGVIBfvrmhwK2AdYYQ=
 github.com/gfleury/go-bitbucket-v1 v0.0.0-20200810125852-15f2a16ca820/go.mod h1:LB3osS9X2JMYmTzcCArHHLrndBAfcVLQAvUddfs+ONs=
 github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=

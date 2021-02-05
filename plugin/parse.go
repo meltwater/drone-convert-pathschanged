@@ -93,14 +93,19 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, changedFile
 			// there must be a better way to check whether paths.include or paths.exclude is set
 			if len(append(resource.Trigger.Paths.Include, resource.Trigger.Paths.Exclude...)) > 0 {
 				skipPipeline := true
-				for _, p := range changedFiles {
-					got, want := resource.Trigger.Paths.match(p), true
-					if got == want {
-						requestLogger.Infoln("including pipeline", resource.Attrs["name"])
+				if len(changedFiles) > 0 {
+					for _, p := range changedFiles {
+						got, want := resource.Trigger.Paths.match(p), true
+						if got == want {
+							requestLogger.Infoln("including pipeline", resource.Attrs["name"])
 
-						skipPipeline = false
-						break
+							skipPipeline = false
+							break
+						}
 					}
+					// in case of a '--allow-empty' commit, don't skip the pipeline
+				} else {
+					skipPipeline = false
 				}
 				if skipPipeline {
 					requestLogger.Infoln("excluding pipeline", resource.Attrs["name"])
@@ -120,14 +125,19 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, changedFile
 				// there must be a better way to check whether paths.include or paths.exclude is set
 				if len(append(step.When.Paths.Include, step.When.Paths.Exclude...)) > 0 {
 					skipStep := true
-					for _, i := range changedFiles {
-						got, want := step.When.Paths.match(i), true
-						if got == want {
-							requestLogger.Infoln("including step", step.Attrs["name"])
+					if len(changedFiles) > 0 {
+						for _, i := range changedFiles {
+							got, want := step.When.Paths.match(i), true
+							if got == want {
+								requestLogger.Infoln("including step", step.Attrs["name"])
 
-							skipStep = false
-							break
+								skipStep = false
+								break
+							}
 						}
+						// in case of a '--allow-empty' commit, don't skip the step
+					} else {
+						skipStep = false
 					}
 					if skipStep {
 						requestLogger.Infoln("excluding step", step.Attrs["name"])
