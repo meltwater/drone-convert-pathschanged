@@ -1,3 +1,8 @@
+## 0.4.0
+### Breaking changes
+- [#46](https://github.com/meltwater/drone-convert-pathschanged/pull/46) handle `--allow-empty` commits with excludes
+  - Until this fix, `--allow-empty` commits with pipeline or path exclusion rules would have caused the pipeline or path to be excluded. With this fix, exclusions are handled properly, so empty commits will trigger pipelines and pipeline steps with path exclusion rules (since no files were changed, pipelines and steps should not be excluded). This could be potentially unexpected behavior if you had been relying on the exclusion of pipelines or steps when making empty commits.
+
 ## 0.3.1
 ### Added
 - linux-arm64 build
