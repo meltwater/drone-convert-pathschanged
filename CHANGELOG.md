@@ -1,3 +1,8 @@
+## 0.5.0
+### Breaking changes
+- [#47](https://github.com/meltwater/drone-convert-pathschanged/pull/47) build images from 'scratch'
+  - Official documentation https://docs.docker.com/develop/develop-images/baseimages/#create-a-simple-parent-image-using-scratch
+
 ## 0.4.0
 ### Breaking changes
 - [#46](https://github.com/meltwater/drone-convert-pathschanged/pull/46) handle `--allow-empty` commits with excludes
