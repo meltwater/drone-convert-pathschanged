@@ -23,7 +23,7 @@ var noContext = context.Background()
 
 func TestNewEmptyPipeline(t *testing.T) {
 
-	providers := []string{"github", "bitbucket-server"}
+	providers := []string{"github", "bitbucket-server", "gitlab"}
 
 	req := &converter.Request{
 		Build: drone.Build{},
@@ -34,7 +34,7 @@ func TestNewEmptyPipeline(t *testing.T) {
 	}
 
 	for _, provider := range providers {
-		plugin := New("invalidtoken", provider)
+		plugin := New("invalidtoken", provider, "", "")
 
 		config, err := plugin.Convert(noContext, req)
 		if err != nil {
@@ -73,7 +73,7 @@ this_is_invalid_yaml
 		},
 	}
 
-	plugin := New("invalidtoken", "")
+	plugin := New("invalidtoken", "", "", "")
 
 	_, err := plugin.Convert(noContext, req)
 	if err == nil {
@@ -115,7 +115,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "unsupported")
+	plugin := New("invalidtoken", "unsupported", "", "")
 
 	_, err := plugin.Convert(noContext, req)
 	if err == nil {
@@ -163,7 +163,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github")
+	plugin := New("invalidtoken", "github", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -236,7 +236,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github")
+	plugin := New("invalidtoken", "github", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -306,7 +306,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github")
+	plugin := New("invalidtoken", "github", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -379,7 +379,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github")
+	plugin := New("invalidtoken", "github", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {

@@ -26,6 +26,7 @@ type spec struct {
 	Provider         string `envconfig:"PROVIDER"`
 	Token            string `envconfig:"TOKEN"`
 	BitBucketAddress string `envconfig:"BB_ADDRESS"`
+	GitLabAddress    string `envconfig:"GITLAB_ADDRESS"`
 }
 
 func contains(s []string, str string) bool {
@@ -61,13 +62,17 @@ func main() {
 	if spec.Provider == "" {
 		logrus.Fatalln("missing provider")
 	} else {
-		providers := []string{"bitbucket-server", "github"}
+		providers := []string{"bitbucket-server", "github", "gitlab"}
 		if !contains(providers, spec.Provider) {
 			logrus.Fatalln("invalid provider:", spec.Provider)
 		}
 	}
 	if spec.BitBucketAddress == "" && spec.Provider == "bitbucket-server" {
 		logrus.Fatalln("missing bitbucket server address")
+	}
+	if spec.GitLabAddress == "" && spec.Provider == "gitlab" {
+		spec.GitLabAddress = "https://gitlab.com"
+		logrus.Info("no gitlab address provided, using 'https://gitlab.com'")
 	}
 	if spec.Bind == "" {
 		spec.Bind = ":3000"
@@ -77,6 +82,8 @@ func main() {
 		plugin.New(
 			spec.Token,
 			spec.Provider,
+			spec.BitBucketAddress,
+			spec.GitLabAddress,
 		),
 		spec.Secret,
 		logrus.StandardLogger(),
