@@ -24,6 +24,7 @@ type (
 		token            string
 		provider         string
 		bitbucketAddress string
+		gitlabAddress    string
 	}
 
 	resource struct {
@@ -104,10 +105,12 @@ func marshal(in []*resource) ([]byte, error) {
 }
 
 // New returns a new conversion plugin.
-func New(token string, provider string) converter.Plugin {
+func New(token string, provider string, bitbucketAddress string, gitlabAddress string) converter.Plugin {
 	return &plugin{
-		token:    token,
-		provider: provider,
+		token:            token,
+		provider:         provider,
+		bitbucketAddress: bitbucketAddress,
+		gitlabAddress:    gitlabAddress,
 	}
 }
 
@@ -153,7 +156,12 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 				return nil, err
 			}
 		case "bitbucket-server":
-			changedFiles, err = providers.GetBBFilesChanged(req.Repo, req.Build, p.token)
+			changedFiles, err = providers.GetBBFilesChanged(req.Repo, req.Build, p.token, p.bitbucketAddress)
+			if err != nil {
+				return nil, err
+			}
+		case "gitlab":
+			changedFiles, err = providers.GetGitLabFilesChanged(req.Repo, req.Build, p.token, p.gitlabAddress)
 			if err != nil {
 				return nil, err
 			}
