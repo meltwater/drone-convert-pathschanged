@@ -9,6 +9,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"strings"
 
 	"github.com/meltwater/drone-convert-pathschanged/providers"
 
@@ -135,47 +136,53 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 	var config string
 
 	// check for any Paths.Include/Exclude fields in Trigger or Steps
-	pathSeen, err := pathSeen(data)
-	if err != nil {
-		requestLogger.Errorln(err)
-		return nil, err
-	}
-
-	if pathSeen {
-		requestLogger.Infoln("a path field was seen")
-
-		var changedFiles []string
-
-		switch p.provider {
-		case "github":
-			changedFiles, err = providers.GetGithubFilesChanged(req.Repo, req.Build, p.token)
-			if err != nil {
-				return nil, err
-			}
-		case "bitbucket-server":
-			changedFiles, err = providers.GetBBFilesChanged(req.Repo, req.Build, p.token)
-			if err != nil {
-				return nil, err
-			}
-		default:
-			requestLogger.Errorln("unsupported provider: ", p.provider)
-			return nil, errors.New("unsupported provider")
-		}
-
-		resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+	// only if the branch is non-master and the commit message has the toggle keyword included
+	if strings.Compare(req.Build.Target, "master") != 0 && strings.Contains(req.Build.Message, "[diff build]") {
+		pathSeen, err := pathSeen(data)
 		if err != nil {
 			requestLogger.Errorln(err)
 			return nil, err
 		}
 
-		c, err := marshal(resources)
-		if err != nil {
-			return nil, err
-		}
-		config = string(c)
+		if pathSeen {
+			requestLogger.Infoln("a path field was seen")
 
+			var changedFiles []string
+
+			switch p.provider {
+			case "github":
+				changedFiles, err = providers.GetGithubFilesChanged(req.Repo, req.Build, p.token)
+				if err != nil {
+					return nil, err
+				}
+			case "bitbucket-server":
+				changedFiles, err = providers.GetBBFilesChanged(req.Repo, req.Build, p.token)
+				if err != nil {
+					return nil, err
+				}
+			default:
+				requestLogger.Errorln("unsupported provider: ", p.provider)
+				return nil, errors.New("unsupported provider")
+			}
+
+			resources, err := parsePipelines(data, req.Build, req.Repo, changedFiles)
+			if err != nil {
+				requestLogger.Errorln(err)
+				return nil, err
+			}
+
+			c, err := marshal(resources)
+			if err != nil {
+				return nil, err
+			}
+			config = string(c)
+
+		} else {
+			requestLogger.Infoln("no paths fields seen")
+			config = data
+		}
 	} else {
-		requestLogger.Infoln("no paths fields seen")
+		requestLogger.Infoln("Paths logic not evaluated because it is toggled off")
 		config = data
 	}
 
