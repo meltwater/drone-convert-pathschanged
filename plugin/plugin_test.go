@@ -23,7 +23,7 @@ var noContext = context.Background()
 
 func TestNewEmptyPipeline(t *testing.T) {
 
-	providers := []string{"github", "bitbucket-server"}
+	providers := []string{"github", "bitbucket-server", "gitea"}
 
 	req := &converter.Request{
 		Build: drone.Build{},
@@ -34,7 +34,7 @@ func TestNewEmptyPipeline(t *testing.T) {
 	}
 
 	for _, provider := range providers {
-		plugin := New("invalidtoken", provider)
+		plugin := New("invalidtoken", provider, "", "")
 
 		config, err := plugin.Convert(noContext, req)
 		if err != nil {
@@ -53,7 +53,6 @@ func TestNewInvalidPipeline(t *testing.T) {
 kind: pipeline
 type: docker
 name: default
-
 this_is_invalid_yaml
 `
 
@@ -73,7 +72,7 @@ this_is_invalid_yaml
 		},
 	}
 
-	plugin := New("invalidtoken", "")
+	plugin := New("invalidtoken", "", "", "")
 
 	_, err := plugin.Convert(noContext, req)
 	if err == nil {
@@ -87,7 +86,6 @@ func TestNewUnsupportedProvider(t *testing.T) {
 kind: pipeline
 type: docker
 name: default
-
 steps:
 - name: message
   image: busybox
@@ -115,7 +113,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "unsupported")
+	plugin := New("invalidtoken", "unsupported", "", "")
 
 	_, err := plugin.Convert(noContext, req)
 	if err == nil {
@@ -136,7 +134,6 @@ func TestNewGithubCommitExcludeStep(t *testing.T) {
 kind: pipeline
 type: docker
 name: default
-
 steps:
 - name: message
   image: busybox
@@ -163,7 +160,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github")
+	plugin := New("invalidtoken", "github", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -209,7 +206,6 @@ func TestNewGithubCommitIncludeStep(t *testing.T) {
 kind: pipeline
 type: docker
 name: default
-
 steps:
 - name: message
   image: busybox
@@ -236,7 +232,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github")
+	plugin := New("invalidtoken", "github", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -279,7 +275,6 @@ func TestNewGithubCompareExcludeStep(t *testing.T) {
 kind: pipeline
 type: docker
 name: default
-
 steps:
 - name: message
   image: busybox
@@ -306,7 +301,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github")
+	plugin := New("invalidtoken", "github", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -352,7 +347,6 @@ func TestNewGithubCompareIncludeStep(t *testing.T) {
 kind: pipeline
 type: docker
 name: default
-
 steps:
 - name: message
   image: busybox
@@ -379,7 +373,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github")
+	plugin := New("invalidtoken", "github", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
