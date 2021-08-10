@@ -192,6 +192,12 @@ For example, the `push` and `tag` events may generate a changeset against the pr
 
 ## Known issues
 
+### Empty commits
+
+Be careful when making empty commits with [`git commit --allow-empty`](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---allow-empty). When an empty commit is made, no files have changed, so this plugin will return the unmodified `.drone.yml` back to the drone server process.
+
+This can lead to potentially unexpected behavior, since any `include` or `exclude` rules will effectively be ignored.
+
 ### YAML anchors
 
 There is a problem in the YAML library where ordering matters during unmarshaling, see https://github.com/meltwater/drone-convert-pathschanged/issues/18
