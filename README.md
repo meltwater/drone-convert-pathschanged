@@ -231,3 +231,12 @@ anchor: &anchor
     event: push
     branch: master
 ```
+
+#### Protected Repos
+
+When this plugin is used in conjunction with [protected repos](https://docs.drone.io/signature/),
+signature validation will frequently fail.
+
+This occurs due to Drone's order of operations, in that the Drone file's 
+signature is checked after the this plugin has rewritten sections based on 
+the paths-changed triggers, resulting in a different signature for the file.
