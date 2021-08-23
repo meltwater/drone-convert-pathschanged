@@ -232,7 +232,7 @@ anchor: &anchor
     branch: master
 ```
 
-#### Protected Repos
+### Protected Repos
 
 When this plugin is used in conjunction with [protected repos](https://docs.drone.io/signature/),
 signature validation will frequently fail.
