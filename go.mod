@@ -15,4 +15,5 @@ require (
 	github.com/nbio/st v0.0.0-20140626010706-e9e8d9816f32 // indirect
 	github.com/prometheus/client_golang v1.3.0
 	github.com/sirupsen/logrus v1.4.2
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 )
