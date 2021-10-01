@@ -26,7 +26,7 @@ steps:
     - tag
 
 - name: publish_amd64_dry_run
-  image: plugins/docker:18
+  image: plugins/docker
   settings:
     dry_run: true
     dockerfile: docker/Dockerfile.linux.amd64
@@ -38,7 +38,7 @@ steps:
     - pull_request
 
 - name: publish_arm64_dry_run
-  image: plugins/docker:18
+  image: plugins/docker
   settings:
     dry_run: true
     dockerfile: docker/Dockerfile.linux.arm64
@@ -50,7 +50,7 @@ steps:
     - pull_request
 
 - name: publish_amd64
-  image: plugins/docker:18
+  image: plugins/docker
   settings:
     auto_tag: true
     auto_tag_suffix: linux-amd64
@@ -66,7 +66,7 @@ steps:
     - tag
 
 - name: publish_arm64
-  image: plugins/docker:18
+  image: plugins/docker
   settings:
     auto_tag: true
     auto_tag_suffix: linux-arm64
