@@ -31,8 +31,6 @@ steps:
     dry_run: true
     dockerfile: docker/Dockerfile.linux.amd64
     repo: meltwater/drone-convert-pathschanged
-    config:
-      from_secret: dockerhub_config_pr
   when:
     event:
     - pull_request
@@ -43,8 +41,6 @@ steps:
     dry_run: true
     dockerfile: docker/Dockerfile.linux.arm64
     repo: meltwater/drone-convert-pathschanged
-    config:
-      from_secret: dockerhub_config_pr
   when:
     event:
     - pull_request
@@ -99,6 +95,9 @@ steps:
 trigger:
   branch:
   - master
+
+image_pull_secrets:
+- dockerhub_config_pr
 ---
 kind: secret
 name: dockerhub_config_pr
@@ -106,6 +105,6 @@ data: Dig1rK959v5NbLeLPhBH773S/nL0l27xbxnnaV545n2ndE2E6k1vBeTwrnmH23ZvYsVXg0kcMc
 
 ---
 kind: signature
-hmac: ac868a942531c1111efc8fb0e899ca2758af3568ece2b9f7716d448e0ac5054c
+hmac: 618da88ac08a9f98be696c6f048c3db5765bd9a78986956b3af1824c84db82f5
 
 ...
