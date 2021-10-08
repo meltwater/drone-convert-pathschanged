@@ -232,6 +232,10 @@ anchor: &anchor
     branch: master
 ```
 
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) to understand how to submit pull requests to us, and also see our [code of conduct](CODE_OF_CONDUCT.md).
+
 ### Protected Repos
 
 When this plugin is used in conjunction with [protected repos](https://docs.drone.io/signature/),

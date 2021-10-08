@@ -39,7 +39,7 @@ the requirements below.
     - [ ] All new and existing tests passed.
 - [ ] Add your changes to `Unreleased` section of [CHANGELOG](CHANGELOG.md).
 - [ ] Improve and update the [README](README.md) (if necessary).
-- [ ] Ensure [documentation](./DOCS.md) is up-to-date. The same file will be updated in [plugin index](https://github.com/drone/drone-plugin-index/blob/master/content/meltwater/drone-cache/index.md) when your PR is accepted, so it will be available for end-users at http://plugins.drone.io.
+
 
 ## Release Process
 
@@ -48,7 +48,7 @@ the requirements below.
 0. **PLEASE DO NOT INTRODUCE BREAKING CHANGES**
 1. Update `README.md`with the latest changes.
 2. Increase the version numbers in any examples files and the README.md to the new version that this
-   the release would represent. The versioning scheme we use is [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/meltwater/drone-cache/tags).
+   the release would represent. The versioning scheme we use is [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/meltwater/drone-convert-pathschanged/tags).
 
 3. Ensure [CHANGELOG](CHANGELOG.md) is up-to-date with new version changes.
 4. Update version references.
@@ -65,8 +65,24 @@ the requirements below.
 
 ## Testing Locally
 
-Follow the steps below to build a local image of drone-convert-pathschanged and run the Drone pipeline against it.
+You can build and run the plugin locally through the CLI (you will need a GitHub token with the ‘repo’ scope)
 
+```bash
+$ cd drone-convert-pathschanged
+$ openssl rand -hex 16
+2ea1d6ca0df30bf3957ad1c0de441f0d
+$ ./scripts/build.sh
+$ docker build -t pathschanged -f docker/Dockerfile.linux.amd64 .
+$ docker run --rm -e DRONE_DEBUG=true -e DRONE_SECRET=2ea1d6ca0df30bf3957ad1c0de441f0d -e PROVIDER=github -e TOKEN=REDACTED --name=converter -p 3000:3000 -it pathschanged
+```
+
+Then you can send to this endpoint by using plugins comandset:
+
+```bash
+$ export DRONE_CONVERT_SECRET=2ea1d6ca0df30bf3957ad1c0de441f0d
+$ export DRONE_CONVERT_ENDPOINT=http://localhost:3000
+$ drone plugins convert --path .drone.yml --before _SHA_ --after _SHA_ --ref refs/heads/changeset --repository meltwater/some-repo
+```
 
 ## Response Times
 
