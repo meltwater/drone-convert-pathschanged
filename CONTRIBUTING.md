@@ -81,7 +81,7 @@ Then you can send to this endpoint by using plugins comandset:
 ```bash
 $ export DRONE_CONVERT_SECRET=2ea1d6ca0df30bf3957ad1c0de441f0d
 $ export DRONE_CONVERT_ENDPOINT=http://localhost:3000
-$ drone plugins convert --path .drone.yml --before _SHA_ --after _SHA_ --ref refs/heads/changeset --repository meltwater/some-repo
+$ drone plugins convert --path .drone.yml --before _SHA_ --after _SHA_ --ref refs/heads/changeset --repository owner/repo
 ```
 
 ## Response Times
