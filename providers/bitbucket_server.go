@@ -3,9 +3,9 @@ package providers
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/drone/drone-go/drone"
 	bitbucketv1 "github.com/gfleury/go-bitbucket-v1"
-	"os"
 )
 
 type bitbucketDiffs struct {
@@ -16,10 +16,9 @@ type bitbucketDiffs struct {
 	} `json:"diffs"`
 }
 
-func GetBBFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string, error) {
+func GetBBFilesChanged(repo drone.Repo, build drone.Build, token string, bitbucketAddress string) ([]string, error) {
 	var files []string
 	var ctx context.Context
-	bitbucketAddress := os.Getenv("BB_ADDRESS")
 	params := map[string]interface{}{
 		"since": build.Before,
 	}
