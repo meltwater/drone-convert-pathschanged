@@ -12,9 +12,17 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-func GetGithubFilesChanged(repo drone.Repo, build drone.Build, token string) ([]string, error) {
+func GetGithubFilesChanged(repo drone.Repo, build drone.Build, token string, githubAddress string) ([]string, error) {
 	newctx := context.Background()
-	client := github.NewDefault()
+	var client *scm.Client
+	var err error
+
+	if githubAddress == "" {
+		client = github.NewDefault()
+	} else {
+		client, err = github.New(githubAddress + "/api/v3")
+	}
+
 	client.Client = &http.Client{
 		Transport: &transport.BearerToken{
 			Token: token,
@@ -23,7 +31,6 @@ func GetGithubFilesChanged(repo drone.Repo, build drone.Build, token string) ([]
 
 	var changes []*scm.Change
 	var result *scm.Response
-	var err error
 
 	if build.Before == "" || build.Before == scm.EmptyCommit {
 		changes, result, err = client.Git.ListChanges(newctx, repo.Slug, build.After, scm.ListOptions{})

@@ -26,6 +26,7 @@ type spec struct {
 	Provider         string `envconfig:"PROVIDER"`
 	Token            string `envconfig:"TOKEN"`
 	BitBucketAddress string `envconfig:"BB_ADDRESS"`
+	GithubServer     string `envconfig:"GITHUB_SERVER"`
 }
 
 func contains(s []string, str string) bool {
@@ -77,6 +78,7 @@ func main() {
 		plugin.New(
 			spec.Token,
 			spec.Provider,
+			spec.GithubServer,
 		),
 		spec.Secret,
 		logrus.StandardLogger(),
