@@ -40,7 +40,7 @@ func TestGetGithubFilesChangedCommit(t *testing.T) {
 		},
 	}
 
-	got, err := GetGithubFilesChanged(req.Repo, req.Build, "invalidtoken")
+	got, err := GetGithubFilesChanged(req.Repo, req.Build, "invalidtoken", "")
 	if err != nil {
 		t.Error(err)
 		return
@@ -77,7 +77,7 @@ func TestGetGithubFilesChangedCompare(t *testing.T) {
 		},
 	}
 
-	got, err := GetGithubFilesChanged(req.Repo, req.Build, "invalidtoken")
+	got, err := GetGithubFilesChanged(req.Repo, req.Build, "invalidtoken", "")
 	if err != nil {
 		t.Error(err)
 		return
