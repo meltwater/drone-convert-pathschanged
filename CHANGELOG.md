@@ -1,3 +1,7 @@
+## 0.6.0
+### Added
+- [#72](https://github.com/meltwater/drone-convert-pathschanged/pull/72) add GitHub Server support
+
 ## 0.5.0
 ### Breaking changes
 - [#47](https://github.com/meltwater/drone-convert-pathschanged/pull/47) build images from 'scratch'
