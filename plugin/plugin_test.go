@@ -483,3 +483,77 @@ name: default
 		t.Log(diff)
 	}
 }
+
+func TestNewBitbucketCompareExcludeStep(t *testing.T) {
+	gock.New("https://api.bitbucket.org").
+		Get("/2.0/repositories/atlassian/atlaskit/diffstat/dec26e0fe887167743c2b7e36531dedfeb6cd478..425863f9dbe56d70c8dcdbf2e4e0805e85591fcc").
+		Reply(200).
+		Type("application/json").
+		File("../providers/testdata/bitbucket/diffstat.json")
+
+	before := `
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "This step will be excluded when CONTRIBUTING.md is changed"
+  when:
+    paths:
+      exclude:
+      - CONTRIBUTING.md
+`
+	// build.Before and build.After are switched due to a bug https://github.com/drone/go-scm/pull/127
+	// FIXME: switcch build.Before and build.After parameters when the above issue is fixed
+	req := &converter.Request{
+		Build: drone.Build{
+			Before: "425863f9dbe56d70c8dcdbf2e4e0805e85591fcc",
+			After:  "dec26e0fe887167743c2b7e36531dedfeb6cd478",
+		},
+		Config: drone.Config{
+			Data: before,
+		},
+		Repo: drone.Repo{
+			Namespace: "atlassian",
+			Name:      "atlaskit",
+			Slug:      "atlassian/atlaskit",
+			Config:    ".drone.yml",
+		},
+	}
+
+	plugin := New("invalidtoken", "bitbucket", "", "", "")
+
+	config, err := plugin.Convert(noContext, req)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	after := `kind: pipeline
+type: docker
+steps:
+- when:
+    paths:
+      exclude:
+      - CONTRIBUTING.md
+    event:
+      exclude:
+      - '*'
+  commands:
+  - echo "This step will be excluded when CONTRIBUTING.md is changed"
+  image: busybox
+  name: message
+name: default
+`
+	want := &drone.Config{
+		Data: after,
+	}
+
+	if diff := cmp.Diff(config.Data, want.Data); diff != "" {
+		t.Errorf("Unexpected Results")
+		t.Log(diff)
+	}
+}
