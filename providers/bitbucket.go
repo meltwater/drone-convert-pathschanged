@@ -10,7 +10,7 @@ import (
 	"github.com/drone/go-scm/scm/transport"
 )
 
-func GetBitbucketFilesChanged(repo drone.Repo, build drone.Build, user string, password string) ([]string, error) {
+func GetBitbucketFilesChanged(repo drone.Repo, build drone.Build, user string, password string, opts scm.ListOptions) ([]string, error) {
 	newctx := context.Background()
 
 	client, err := bitbucket.New("https://api.bitbucket.org")
@@ -25,11 +25,20 @@ func GetBitbucketFilesChanged(repo drone.Repo, build drone.Build, user string, p
 		},
 	}
 
-	// build.Before and build.After are switched due to a bug https://github.com/drone/go-scm/pull/127
-	// FIXME: switcch build.Before and build.After parameters when the above issue is fixed
-	got, _, err := client.Git.CompareChanges(newctx, repo.Slug, build.After, build.Before, scm.ListOptions{})
-	if err != nil {
-		return nil, err
+	var got []*scm.Change
+
+	if build.Before == "" || build.Before == scm.EmptyCommit {
+		got, _, err = client.Git.ListChanges(newctx, repo.Slug, build.After, opts)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// build.Before and build.After are switched due to a bug https://github.com/drone/go-scm/pull/127
+		// FIXME: switcch build.Before and build.After parameters when the above issue is fixed
+		got, _, err = client.Git.CompareChanges(newctx, repo.Slug, build.After, build.Before, opts)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var files []string

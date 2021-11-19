@@ -14,6 +14,7 @@ import (
 
 	"github.com/drone/drone-go/drone"
 	"github.com/drone/drone-go/plugin/converter"
+	"github.com/drone/go-scm/scm"
 
 	"github.com/buildkite/yaml"
 	"github.com/sirupsen/logrus"
@@ -159,7 +160,7 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 				return nil, err
 			}
 		case "bitbucket":
-			changedFiles, err = providers.GetBitbucketFilesChanged(req.Repo, req.Build, p.bitbucketUser, p.bitbucketPassword)
+			changedFiles, err = providers.GetBitbucketFilesChanged(req.Repo, req.Build, p.bitbucketUser, p.bitbucketPassword, scm.ListOptions{})
 			if err != nil {
 				return nil, err
 			}
