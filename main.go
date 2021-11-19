@@ -8,28 +8,31 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/meltwater/drone-convert-pathschanged/plugin"
+
 	"github.com/drone/drone-go/plugin/converter"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/meltwater/drone-convert-pathschanged/plugin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )
 
 // spec provides the plugin settings.
-type spec struct {
-	Bind   string `envconfig:"DRONE_BIND"`
-	Debug  bool   `envconfig:"DRONE_DEBUG"`
-	Text   bool   `envconfig:"DRONE_LOGS_TEXT"`
-	Secret string `envconfig:"DRONE_SECRET"`
+type (
+	spec struct {
+		Bind   string `envconfig:"DRONE_BIND"`
+		Debug  bool   `envconfig:"DRONE_DEBUG"`
+		Text   bool   `envconfig:"DRONE_LOGS_TEXT"`
+		Secret string `envconfig:"DRONE_SECRET"`
 
-	Provider          string `envconfig:"PROVIDER"`
-	Token             string `envconfig:"TOKEN"`
-	BitBucketAddress  string `envconfig:"BB_ADDRESS"`
-	BitBucketUser     string `envconfig:"BITBUCKET_USER"`
-	BitBucketPassword string `envconfig:"BITBUCKET_PASSWORD"`
-	GithubServer      string `envconfig:"GITHUB_SERVER"`
-}
+		Provider          string `envconfig:"PROVIDER"`
+		Token             string `envconfig:"TOKEN"`
+		BitBucketAddress  string `envconfig:"BB_ADDRESS"`
+		BitBucketUser     string `envconfig:"BITBUCKET_USER"`
+		BitBucketPassword string `envconfig:"BITBUCKET_PASSWORD"`
+		GithubServer      string `envconfig:"GITHUB_SERVER"`
+	}
+)
 
 func contains(s []string, str string) bool {
 	for _, v := range s {
@@ -82,14 +85,17 @@ func main() {
 		spec.Bind = ":3000"
 	}
 
+	params := &plugin.Params{
+		BitBucketAddress:  spec.BitBucketAddress,
+		BitBucketUser:     spec.BitBucketUser,
+		BitBucketPassword: spec.BitBucketPassword,
+		GithubServer:      spec.GithubServer,
+		Token:             spec.Token,
+	}
+
 	handler := converter.Handler(
-		plugin.New(
-			spec.Token,
-			spec.Provider,
-			spec.GithubServer,
-			spec.BitBucketUser,
-			spec.BitBucketPassword,
-		),
+
+		plugin.New(spec.Provider, params),
 		spec.Secret,
 		logrus.StandardLogger(),
 	)
