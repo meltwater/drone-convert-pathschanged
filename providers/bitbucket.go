@@ -33,9 +33,7 @@ func GetBitbucketFilesChanged(repo drone.Repo, build drone.Build, user string, p
 			return nil, err
 		}
 	} else {
-		// build.Before and build.After are switched due to a bug https://github.com/drone/go-scm/pull/127
-		// FIXME: switcch build.Before and build.After parameters when the above issue is fixed
-		got, _, err = client.Git.CompareChanges(newctx, repo.Slug, build.After, build.Before, opts)
+		got, _, err = client.Git.CompareChanges(newctx, repo.Slug, build.Before, build.After, opts)
 		if err != nil {
 			return nil, err
 		}

@@ -486,7 +486,7 @@ name: default
 
 func TestNewBitbucketCompareExcludeStep(t *testing.T) {
 	gock.New("https://api.bitbucket.org").
-		Get("/2.0/repositories/atlassian/atlaskit/diffstat/dec26e0fe887167743c2b7e36531dedfeb6cd478..425863f9dbe56d70c8dcdbf2e4e0805e85591fcc").
+		Get("/2.0/repositories/atlassian/atlaskit/diffstat/425863f9dbe56d70c8dcdbf2e4e0805e85591fcc..dec26e0fe887167743c2b7e36531dedfeb6cd478").
 		Reply(200).
 		Type("application/json").
 		File("../providers/testdata/bitbucket/diffstat.json")
@@ -506,12 +506,10 @@ steps:
       exclude:
       - CONTRIBUTING.md
 `
-	// build.Before and build.After are switched due to a bug https://github.com/drone/go-scm/pull/127
-	// FIXME: switcch build.Before and build.After parameters when the above issue is fixed
 	req := &converter.Request{
 		Build: drone.Build{
-			Before: "425863f9dbe56d70c8dcdbf2e4e0805e85591fcc",
-			After:  "dec26e0fe887167743c2b7e36531dedfeb6cd478",
+			Before: "dec26e0fe887167743c2b7e36531dedfeb6cd478",
+			After:  "425863f9dbe56d70c8dcdbf2e4e0805e85591fcc",
 		},
 		Config: drone.Config{
 			Data: before,

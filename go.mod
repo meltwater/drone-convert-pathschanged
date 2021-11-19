@@ -7,7 +7,7 @@ require (
 	github.com/buildkite/yaml v2.1.0+incompatible
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/drone/drone-go v1.7.1
-	github.com/drone/go-scm v1.16.0
+	github.com/drone/go-scm v1.16.1
 	github.com/gfleury/go-bitbucket-v1 v0.0.0-20210826163055-dff2223adeac
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.5
