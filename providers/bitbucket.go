@@ -8,7 +8,6 @@ import (
 	"github.com/drone/go-scm/scm"
 	"github.com/drone/go-scm/scm/driver/bitbucket"
 	"github.com/drone/go-scm/scm/transport"
-	"github.com/sirupsen/logrus"
 )
 
 func GetBitbucketFilesChanged(repo drone.Repo, build drone.Build, user string, password string) ([]string, error) {
@@ -19,11 +18,6 @@ func GetBitbucketFilesChanged(repo drone.Repo, build drone.Build, user string, p
 		return nil, err
 	}
 
-	requestLogger := logrus.WithFields(logrus.Fields{
-		"repo_namespace": repo.Namespace,
-		"repo_name":      repo.Name,
-	})
-
 	client.Client = &http.Client{
 		Transport: &transport.BasicAuth{
 			Username: user,
@@ -31,8 +25,9 @@ func GetBitbucketFilesChanged(repo drone.Repo, build drone.Build, user string, p
 		},
 	}
 
-	//got, _, err := client.Git.ListChanges(newctx, repo.Slug, build.After, scm.ListOptions{})
-	got, _, err := client.Git.CompareChanges(newctx, repo.Slug, build.Before, build.After, scm.ListOptions{})
+	// build.Before and build.After are switched due to a bug https://github.com/drone/go-scm/pull/127
+	// FIXME: switcch build.Before and build.After parameters when the above issue is fixed
+	got, _, err := client.Git.CompareChanges(newctx, repo.Slug, build.After, build.Before, scm.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +36,6 @@ func GetBitbucketFilesChanged(repo drone.Repo, build drone.Build, user string, p
 	for _, c := range got {
 		files = append(files, c.Path)
 	}
-	requestLogger.Infoln("files", files)
 
 	return files, nil
 }
