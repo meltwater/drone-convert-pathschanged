@@ -7,7 +7,7 @@ require (
 	github.com/buildkite/yaml v2.1.0+incompatible
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/drone/drone-go v1.7.1
-	github.com/drone/go-scm v1.15.2
+	github.com/drone/go-scm v1.16.1
 	github.com/gfleury/go-bitbucket-v1 v0.0.0-20210826163055-dff2223adeac
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.5
@@ -15,7 +15,6 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
-	github.com/nbio/st v0.0.0-20140626010706-e9e8d9816f32 // indirect
 	github.com/prometheus/client_golang v1.11.0
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect

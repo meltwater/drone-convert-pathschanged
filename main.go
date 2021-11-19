@@ -23,10 +23,12 @@ type spec struct {
 	Text   bool   `envconfig:"DRONE_LOGS_TEXT"`
 	Secret string `envconfig:"DRONE_SECRET"`
 
-	Provider         string `envconfig:"PROVIDER"`
-	Token            string `envconfig:"TOKEN"`
-	BitBucketAddress string `envconfig:"BB_ADDRESS"`
-	GithubServer     string `envconfig:"GITHUB_SERVER"`
+	Provider          string `envconfig:"PROVIDER"`
+	Token             string `envconfig:"TOKEN"`
+	BitBucketAddress  string `envconfig:"BB_ADDRESS"`
+	BitBucketUser     string `envconfig:"BITBUCKET_USER"`
+	BitBucketPassword string `envconfig:"BITBUCKET_PASSWORD"`
+	GithubServer      string `envconfig:"GITHUB_SERVER"`
 }
 
 func contains(s []string, str string) bool {
@@ -56,16 +58,22 @@ func main() {
 	if spec.Secret == "" {
 		logrus.Fatalln("missing secret key")
 	}
-	if spec.Token == "" {
-		logrus.Fatalln("missing token")
-	}
 	if spec.Provider == "" {
 		logrus.Fatalln("missing provider")
 	} else {
-		providers := []string{"bitbucket-server", "github"}
+		providers := []string{"bitbucket", "bitbucket-server", "github"}
 		if !contains(providers, spec.Provider) {
 			logrus.Fatalln("invalid provider:", spec.Provider)
 		}
+	}
+	if spec.Token == "" && (spec.Provider == "github" || spec.Provider == "bitbucket-server") {
+		logrus.Fatalln("missing token")
+	}
+	if spec.BitBucketUser == "" && spec.Provider == "bitbucket" {
+		logrus.Fatalln("missing bitbucket user")
+	}
+	if spec.BitBucketPassword == "" && spec.Provider == "bitbucket" {
+		logrus.Fatalln("missing bitbucket password")
 	}
 	if spec.BitBucketAddress == "" && spec.Provider == "bitbucket-server" {
 		logrus.Fatalln("missing bitbucket server address")
@@ -79,6 +87,8 @@ func main() {
 			spec.Token,
 			spec.Provider,
 			spec.GithubServer,
+			spec.BitBucketUser,
+			spec.BitBucketPassword,
 		),
 		spec.Secret,
 		logrus.StandardLogger(),

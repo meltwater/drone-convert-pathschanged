@@ -23,7 +23,7 @@ var noContext = context.Background()
 
 func TestNewEmptyPipeline(t *testing.T) {
 
-	providers := []string{"github", "bitbucket-server"}
+	providers := []string{"github", "bitbucket", "bitbucket-server"}
 
 	req := &converter.Request{
 		Build: drone.Build{},
@@ -34,7 +34,7 @@ func TestNewEmptyPipeline(t *testing.T) {
 	}
 
 	for _, provider := range providers {
-		plugin := New("invalidtoken", provider, "")
+		plugin := New("invalidtoken", provider, "", "", "")
 
 		config, err := plugin.Convert(noContext, req)
 		if err != nil {
@@ -73,7 +73,7 @@ this_is_invalid_yaml
 		},
 	}
 
-	plugin := New("invalidtoken", "", "")
+	plugin := New("invalidtoken", "", "", "", "")
 
 	_, err := plugin.Convert(noContext, req)
 	if err == nil {
@@ -115,7 +115,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "unsupported", "")
+	plugin := New("invalidtoken", "unsupported", "", "", "")
 
 	_, err := plugin.Convert(noContext, req)
 	if err == nil {
@@ -124,6 +124,7 @@ steps:
 	}
 }
 
+// github provider
 func TestNewGithubCommitExcludeStep(t *testing.T) {
 	gock.New("https://api.github.com").
 		Get("/repos/meltwater/drone-convert-pathschanged/commits/6ee3cf41d995a79857e0db41c47bf619e6546571").
@@ -163,7 +164,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github", "")
+	plugin := New("invalidtoken", "github", "", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -236,7 +237,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github", "")
+	plugin := New("invalidtoken", "github", "", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -306,7 +307,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github", "")
+	plugin := New("invalidtoken", "github", "", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -379,7 +380,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github", "")
+	plugin := New("invalidtoken", "github", "", "", "")
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -396,6 +397,151 @@ steps:
       - .drone.yml
   commands:
   - echo "This step will be included when .drone.yml is changed"
+  image: busybox
+  name: message
+name: default
+`
+	want := &drone.Config{
+		Data: after,
+	}
+
+	if diff := cmp.Diff(config.Data, want.Data); diff != "" {
+		t.Errorf("Unexpected Results")
+		t.Log(diff)
+	}
+}
+
+// bitbucket provider
+func TestNewBitbucketCommitExcludeStep(t *testing.T) {
+	gock.New("https://api.bitbucket.org").
+		Get("/2.0/repositories/atlassian/atlaskit/diffstat/425863f9dbe56d70c8dcdbf2e4e0805e85591fcc").
+		Reply(200).
+		Type("application/json").
+		File("../providers/testdata/bitbucket/diffstat.json")
+
+	before := `
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "This step will be excluded when CONTRIBUTING.md is changed"
+  when:
+    paths:
+      exclude:
+      - CONTRIBUTING.md
+`
+	req := &converter.Request{
+		Build: drone.Build{
+			Before: "",
+			After:  "425863f9dbe56d70c8dcdbf2e4e0805e85591fcc",
+		},
+		Config: drone.Config{
+			Data: before,
+		},
+		Repo: drone.Repo{
+			Namespace: "atlassian",
+			Name:      "atlaskit",
+			Slug:      "atlassian/atlaskit",
+			Config:    ".drone.yml",
+		},
+	}
+
+	plugin := New("invalidtoken", "bitbucket", "", "", "")
+
+	config, err := plugin.Convert(noContext, req)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	after := `kind: pipeline
+type: docker
+steps:
+- when:
+    paths:
+      exclude:
+      - CONTRIBUTING.md
+    event:
+      exclude:
+      - '*'
+  commands:
+  - echo "This step will be excluded when CONTRIBUTING.md is changed"
+  image: busybox
+  name: message
+name: default
+`
+	want := &drone.Config{
+		Data: after,
+	}
+
+	if diff := cmp.Diff(config.Data, want.Data); diff != "" {
+		t.Errorf("Unexpected Results")
+		t.Log(diff)
+	}
+}
+
+func TestNewBitbucketCompareExcludeStep(t *testing.T) {
+	gock.New("https://api.bitbucket.org").
+		Get("/2.0/repositories/atlassian/atlaskit/diffstat/425863f9dbe56d70c8dcdbf2e4e0805e85591fcc..dec26e0fe887167743c2b7e36531dedfeb6cd478").
+		Reply(200).
+		Type("application/json").
+		File("../providers/testdata/bitbucket/diffstat.json")
+
+	before := `
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "This step will be excluded when CONTRIBUTING.md is changed"
+  when:
+    paths:
+      exclude:
+      - CONTRIBUTING.md
+`
+	req := &converter.Request{
+		Build: drone.Build{
+			Before: "dec26e0fe887167743c2b7e36531dedfeb6cd478",
+			After:  "425863f9dbe56d70c8dcdbf2e4e0805e85591fcc",
+		},
+		Config: drone.Config{
+			Data: before,
+		},
+		Repo: drone.Repo{
+			Namespace: "atlassian",
+			Name:      "atlaskit",
+			Slug:      "atlassian/atlaskit",
+			Config:    ".drone.yml",
+		},
+	}
+
+	plugin := New("invalidtoken", "bitbucket", "", "", "")
+
+	config, err := plugin.Convert(noContext, req)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	after := `kind: pipeline
+type: docker
+steps:
+- when:
+    paths:
+      exclude:
+      - CONTRIBUTING.md
+    event:
+      exclude:
+      - '*'
+  commands:
+  - echo "This step will be excluded when CONTRIBUTING.md is changed"
   image: busybox
   name: message
 name: default

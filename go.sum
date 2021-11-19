@@ -63,8 +63,10 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/drone/drone-go v1.7.1 h1:ZX+3Rs8YHUSUQ5mkuMLmm1zr1ttiiE2YGNxF3AnyDKw=
 github.com/drone/drone-go v1.7.1/go.mod h1:fxCf9jAnXDZV1yDr0ckTuWd1intvcQwfJmTRpTZ1mXg=
-github.com/drone/go-scm v1.15.2 h1:H5iDEGTYZwb/n3sx+ekbXHOwqi/3sYTJJunJUiXLAVA=
-github.com/drone/go-scm v1.15.2/go.mod h1:lXwfbyrIJwFFME5TpzavkwO2T5X8yBK6t6cve7g91x0=
+github.com/drone/go-scm v1.16.0 h1:HvWd01b2MzBSlOq/O+jY9kjDlG+8ODu6W9GGGU5NUnY=
+github.com/drone/go-scm v1.16.0/go.mod h1:DFIJJjhMj0TSXPz+0ni4nyZ9gtTtC40Vh/TGRugtyWw=
+github.com/drone/go-scm v1.16.1 h1:OuCJ/d9iUzxSDqryOn5EW2sdOK92gSSMLhMe9Vf+r3c=
+github.com/drone/go-scm v1.16.1/go.mod h1:DFIJJjhMj0TSXPz+0ni4nyZ9gtTtC40Vh/TGRugtyWw=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=

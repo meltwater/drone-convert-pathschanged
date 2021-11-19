@@ -14,6 +14,7 @@ import (
 
 	"github.com/drone/drone-go/drone"
 	"github.com/drone/drone-go/plugin/converter"
+	"github.com/drone/go-scm/scm"
 
 	"github.com/buildkite/yaml"
 	"github.com/sirupsen/logrus"
@@ -21,10 +22,12 @@ import (
 
 type (
 	plugin struct {
-		token            string
-		provider         string
-		bitbucketAddress string
-		githubAddress    string
+		token             string
+		provider          string
+		bitbucketAddress  string
+		bitbucketUser     string
+		bitbucketPassword string
+		githubAddress     string
 	}
 
 	resource struct {
@@ -105,11 +108,13 @@ func marshal(in []*resource) ([]byte, error) {
 }
 
 // New returns a new conversion plugin.
-func New(token string, provider string, githubAddress string) converter.Plugin {
+func New(token string, provider string, githubAddress string, bitbucketUser string, bitbucketPassword string) converter.Plugin {
 	return &plugin{
-		token:         token,
-		provider:      provider,
-		githubAddress: githubAddress,
+		token:             token,
+		provider:          provider,
+		githubAddress:     githubAddress,
+		bitbucketUser:     bitbucketUser,
+		bitbucketPassword: bitbucketPassword,
 	}
 }
 
@@ -151,6 +156,11 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 		switch p.provider {
 		case "github":
 			changedFiles, err = providers.GetGithubFilesChanged(req.Repo, req.Build, p.token, p.githubAddress)
+			if err != nil {
+				return nil, err
+			}
+		case "bitbucket":
+			changedFiles, err = providers.GetBitbucketFilesChanged(req.Repo, req.Build, p.bitbucketUser, p.bitbucketPassword, scm.ListOptions{})
 			if err != nil {
 				return nil, err
 			}
