@@ -58,9 +58,6 @@ func main() {
 	if spec.Secret == "" {
 		logrus.Fatalln("missing secret key")
 	}
-	if spec.Token == "" {
-		logrus.Fatalln("missing token")
-	}
 	if spec.Provider == "" {
 		logrus.Fatalln("missing provider")
 	} else {
@@ -68,6 +65,15 @@ func main() {
 		if !contains(providers, spec.Provider) {
 			logrus.Fatalln("invalid provider:", spec.Provider)
 		}
+	}
+	if spec.Token == "" && (spec.Provider == "github" || spec.Provider == "bitbucket-server") {
+		logrus.Fatalln("missing token")
+	}
+	if spec.BitBucketUser == "" && spec.Provider == "bitbucket" {
+		logrus.Fatalln("missing bitbucket user")
+	}
+	if spec.BitBucketPassword == "" && spec.Provider == "bitbucket" {
+		logrus.Fatalln("missing bitbucket password")
 	}
 	if spec.BitBucketAddress == "" && spec.Provider == "bitbucket-server" {
 		logrus.Fatalln("missing bitbucket server address")
