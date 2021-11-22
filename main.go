@@ -25,12 +25,14 @@ type (
 		Text   bool   `envconfig:"DRONE_LOGS_TEXT"`
 		Secret string `envconfig:"DRONE_SECRET"`
 
-		Provider          string `envconfig:"PROVIDER"`
-		Token             string `envconfig:"TOKEN"`
+		Provider string `envconfig:"PROVIDER"`
+		Token    string `envconfig:"TOKEN"`
+		// BB_ADDRESS is deprecated in favor of STASH_SERVER, it will be removed in a future version
 		BitBucketAddress  string `envconfig:"BB_ADDRESS"`
 		BitBucketUser     string `envconfig:"BITBUCKET_USER"`
 		BitBucketPassword string `envconfig:"BITBUCKET_PASSWORD"`
 		GithubServer      string `envconfig:"GITHUB_SERVER"`
+		StashServer       string `envconfig:"STASH_SERVER"`
 	}
 )
 
@@ -64,7 +66,13 @@ func main() {
 	if spec.Provider == "" {
 		logrus.Fatalln("missing provider")
 	} else {
-		providers := []string{"bitbucket", "bitbucket-server", "github"}
+		providers := []string{
+			"bitbucket",
+			// bitbucket-server support is deprecated in favor of stash, it will be removed in a future version
+			"bitbucket-server",
+			"github",
+			"stash",
+		}
 		if !contains(providers, spec.Provider) {
 			logrus.Fatalln("invalid provider:", spec.Provider)
 		}
@@ -80,17 +88,27 @@ func main() {
 	}
 	if spec.BitBucketAddress == "" && spec.Provider == "bitbucket-server" {
 		logrus.Fatalln("missing bitbucket server address")
+	} else if spec.BitBucketAddress != "" && spec.Provider == "bitbucket-server" {
+		// backwards compatible support for bitbucket-server, this will be removed in a future version
+		spec.StashServer = spec.BitBucketAddress
+		spec.Provider = "stash"
+
+		logrus.Warningln("bitbucket-server support is deprecated, please use stash")
 	}
+	if spec.StashServer == "" && spec.Provider == "stash" {
+		logrus.Fatalln("missing stash server")
+	}
+
 	if spec.Bind == "" {
 		spec.Bind = ":3000"
 	}
 
 	params := &plugin.Params{
-		BitBucketAddress:  spec.BitBucketAddress,
 		BitBucketUser:     spec.BitBucketUser,
 		BitBucketPassword: spec.BitBucketPassword,
 		GithubServer:      spec.GithubServer,
 		Token:             spec.Token,
+		StashServer:       spec.StashServer,
 	}
 
 	handler := converter.Handler(

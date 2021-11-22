@@ -22,10 +22,10 @@ import (
 
 type (
 	Params struct {
-		BitBucketAddress  string
 		BitBucketUser     string
 		BitBucketPassword string
 		GithubServer      string
+		StashServer       string
 		Token             string
 	}
 
@@ -165,8 +165,8 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 			if err != nil {
 				return nil, err
 			}
-		case "bitbucket-server":
-			changedFiles, err = providers.GetBBFilesChanged(req.Repo, req.Build, p.params.Token)
+		case "stash":
+			changedFiles, err = providers.GetStashFilesChanged(req.Repo, req.Build, p.params.StashServer, p.params.Token, scm.ListOptions{})
 			if err != nil {
 				return nil, err
 			}
