@@ -23,7 +23,7 @@ var noContext = context.Background()
 
 func TestNewEmptyPipeline(t *testing.T) {
 
-	providers := []string{"github", "bitbucket", "bitbucket-server"}
+	providers := []string{"github", "bitbucket", "bitbucket-server", "stash"}
 
 	req := &converter.Request{
 		Build: drone.Build{},

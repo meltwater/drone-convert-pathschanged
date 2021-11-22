@@ -5,6 +5,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 
@@ -45,11 +46,54 @@ func contains(s []string, str string) bool {
 	return false
 }
 
+func validate(spec *spec) error {
+	if spec.Secret == "" {
+		return fmt.Errorf("missing secret key")
+	}
+	if spec.Provider == "" {
+		return fmt.Errorf("missing provider")
+	} else {
+		providers := []string{
+			"bitbucket",
+			// bitbucket-server support is deprecated in favor of stash, it will be removed in a future version
+			"bitbucket-server",
+			"github",
+			"stash",
+		}
+		if !contains(providers, spec.Provider) {
+			return fmt.Errorf("unsupported provider")
+		}
+	}
+	if spec.Token == "" && (spec.Provider == "github" || spec.Provider == "bitbucket-server" || spec.Provider == "stash") {
+		return fmt.Errorf("missing token")
+	}
+	if spec.BitBucketUser == "" && spec.Provider == "bitbucket" {
+		return fmt.Errorf("missing bitbucket user")
+	}
+	if spec.BitBucketPassword == "" && spec.Provider == "bitbucket" {
+		return fmt.Errorf("missing bitbucket password")
+	}
+	if spec.BitBucketAddress == "" && spec.Provider == "bitbucket-server" {
+		return fmt.Errorf("missing bitbucket server address")
+	} else if spec.BitBucketAddress != "" && spec.Provider == "bitbucket-server" {
+		// backwards compatible support for bitbucket-server, this will be removed in a future version
+		spec.StashServer = spec.BitBucketAddress
+		spec.Provider = "stash"
+
+		logrus.Warningln("bitbucket-server support is deprecated, please use stash")
+	}
+	if spec.StashServer == "" && spec.Provider == "stash" {
+		return fmt.Errorf("missing stash server")
+	}
+
+	return nil
+}
+
 func main() {
 	spec := new(spec)
 	err := envconfig.Process("", spec)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Fatalln(err)
 	}
 
 	if spec.Debug {
@@ -60,43 +104,10 @@ func main() {
 	} else {
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
-	if spec.Secret == "" {
-		logrus.Fatalln("missing secret key")
-	}
-	if spec.Provider == "" {
-		logrus.Fatalln("missing provider")
-	} else {
-		providers := []string{
-			"bitbucket",
-			// bitbucket-server support is deprecated in favor of stash, it will be removed in a future version
-			"bitbucket-server",
-			"github",
-			"stash",
-		}
-		if !contains(providers, spec.Provider) {
-			logrus.Fatalln("invalid provider:", spec.Provider)
-		}
-	}
-	if spec.Token == "" && (spec.Provider == "github" || spec.Provider == "bitbucket-server") {
-		logrus.Fatalln("missing token")
-	}
-	if spec.BitBucketUser == "" && spec.Provider == "bitbucket" {
-		logrus.Fatalln("missing bitbucket user")
-	}
-	if spec.BitBucketPassword == "" && spec.Provider == "bitbucket" {
-		logrus.Fatalln("missing bitbucket password")
-	}
-	if spec.BitBucketAddress == "" && spec.Provider == "bitbucket-server" {
-		logrus.Fatalln("missing bitbucket server address")
-	} else if spec.BitBucketAddress != "" && spec.Provider == "bitbucket-server" {
-		// backwards compatible support for bitbucket-server, this will be removed in a future version
-		spec.StashServer = spec.BitBucketAddress
-		spec.Provider = "stash"
 
-		logrus.Warningln("bitbucket-server support is deprecated, please use stash")
-	}
-	if spec.StashServer == "" && spec.Provider == "stash" {
-		logrus.Fatalln("missing stash server")
+	err = validate(spec)
+	if err != nil {
+		logrus.Fatalln(err)
 	}
 
 	if spec.Bind == "" {
@@ -112,7 +123,6 @@ func main() {
 	}
 
 	handler := converter.Handler(
-
 		plugin.New(spec.Provider, params),
 		spec.Secret,
 		logrus.StandardLogger(),

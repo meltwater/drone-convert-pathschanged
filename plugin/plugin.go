@@ -171,7 +171,7 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 				return nil, err
 			}
 		default:
-			requestLogger.Errorln("unsupported provider: ", p.provider)
+			requestLogger.Errorln("unsupported provider:", p.provider)
 			return nil, errors.New("unsupported provider")
 		}
 
