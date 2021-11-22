@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -131,11 +130,17 @@ func TestValidateBitbucketServerStashCompatibility(t *testing.T) {
 		t.Error(err)
 	}
 
-	got := fmt.Sprintf("%s %s", s.Provider, s.StashServer)
-	want := fmt.Sprintf("stash %s", s.BitBucketAddress)
+	// validate should replace 'Provider' with 'stash' and set 'StashServer'
+	want := &spec{
+		BitBucketAddress: "example.com",
+		Provider:         "stash",
+		StashServer:      "example.com",
+		Secret:           "abcdefg",
+		Token:            "abcdefg",
+	}
 
-	if got != want {
-		t.Errorf("wanted %s, got %s", want, got)
+	if *s != *want {
+		t.Errorf("wanted %+v, got %+v", *want, *s)
 	}
 }
 
