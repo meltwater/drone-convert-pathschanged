@@ -91,6 +91,7 @@ this_is_invalid_yaml
 }
 
 func TestNewUnsupportedProvider(t *testing.T) {
+
 	data := `
 kind: pipeline
 type: docker
@@ -130,7 +131,12 @@ steps:
 	plugin := New("unsupported", params)
 
 	_, err := plugin.Convert(noContext, req)
-	if err == nil {
+
+	// just looking for an error here isn't enough, since calling 'New' will always return
+	// an error during this test, because it can't authenticate with the provider
+	//
+	// therefore, look for the specific "unsupported provided" error
+	if err.Error() != "unsupported provider" {
 		t.Error("unsupported provider did not return error")
 		return
 	}

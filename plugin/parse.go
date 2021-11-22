@@ -114,7 +114,7 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, changedFile
 					if resource.Trigger.Attrs == nil {
 						resource.Trigger.Attrs = make(map[string]interface{})
 					}
-					resource.Trigger.Attrs["event"] = map[string][]string{"exclude": []string{"*"}}
+					resource.Trigger.Attrs["event"] = map[string][]string{"exclude": {"*"}}
 				}
 			}
 
@@ -146,7 +146,7 @@ func parsePipelines(data string, build drone.Build, repo drone.Repo, changedFile
 						if step.When.Attrs == nil {
 							step.When.Attrs = make(map[string]interface{})
 						}
-						step.When.Attrs["event"] = map[string][]string{"exclude": []string{"*"}}
+						step.When.Attrs["event"] = map[string][]string{"exclude": {"*"}}
 					}
 				}
 			}
