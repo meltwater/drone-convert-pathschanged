@@ -125,6 +125,7 @@ $ docker run -d \
   --env=DRONE_SECRET=bea26a2221fd8090ea38720fc445eca6 \
   --env=TOKEN=9e6eij3ckzvpe9mrhnqcis6zf8dhopmm46e3pi96 \
   --env=PROVIDER=bitbucket-server \
+  --env=BB_ADDRESS=https://your-bitbucket-server-address
   --restart=always \
   --name=converter meltwater/drone-convert-pathschanged
 ```
