@@ -135,7 +135,7 @@ steps:
 	// just looking for an error here isn't enough, since calling 'New' will always return
 	// an error during this test, because it can't authenticate with the provider
 	//
-	// therefore, look for the specific "unsupported provided" error
+	// therefore, look for the specific 'unsupported provided' error
 	if err.Error() != "unsupported provider" {
 		t.Error("unsupported provider did not return error")
 		return
