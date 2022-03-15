@@ -21,13 +21,17 @@ import (
 )
 
 type (
+	Params struct {
+		BitBucketUser     string
+		BitBucketPassword string
+		GithubServer      string
+		StashServer       string
+		Token             string
+	}
+
 	plugin struct {
-		token             string
-		provider          string
-		bitbucketAddress  string
-		bitbucketUser     string
-		bitbucketPassword string
-		githubAddress     string
+		provider string
+		params   Params
 	}
 
 	resource struct {
@@ -108,13 +112,10 @@ func marshal(in []*resource) ([]byte, error) {
 }
 
 // New returns a new conversion plugin.
-func New(token string, provider string, githubAddress string, bitbucketUser string, bitbucketPassword string) converter.Plugin {
+func New(provider string, p *Params) converter.Plugin {
 	return &plugin{
-		token:             token,
-		provider:          provider,
-		githubAddress:     githubAddress,
-		bitbucketUser:     bitbucketUser,
-		bitbucketPassword: bitbucketPassword,
+		provider: provider,
+		params:   *p,
 	}
 }
 
@@ -155,22 +156,22 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 
 		switch p.provider {
 		case "github":
-			changedFiles, err = providers.GetGithubFilesChanged(req.Repo, req.Build, p.token, p.githubAddress)
+			changedFiles, err = providers.GetGithubFilesChanged(req.Repo, req.Build, p.params.Token, p.params.GithubServer)
 			if err != nil {
 				return nil, err
 			}
 		case "bitbucket":
-			changedFiles, err = providers.GetBitbucketFilesChanged(req.Repo, req.Build, p.bitbucketUser, p.bitbucketPassword, scm.ListOptions{})
+			changedFiles, err = providers.GetBitbucketFilesChanged(req.Repo, req.Build, p.params.BitBucketUser, p.params.BitBucketPassword, scm.ListOptions{})
 			if err != nil {
 				return nil, err
 			}
-		case "bitbucket-server":
-			changedFiles, err = providers.GetBBFilesChanged(req.Repo, req.Build, p.token)
+		case "stash":
+			changedFiles, err = providers.GetStashFilesChanged(req.Repo, req.Build, p.params.StashServer, p.params.Token, scm.ListOptions{})
 			if err != nil {
 				return nil, err
 			}
 		default:
-			requestLogger.Errorln("unsupported provider: ", p.provider)
+			requestLogger.Errorln("unsupported provider:", p.provider)
 			return nil, errors.New("unsupported provider")
 		}
 

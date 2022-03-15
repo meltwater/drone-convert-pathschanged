@@ -23,7 +23,7 @@ var noContext = context.Background()
 
 func TestNewEmptyPipeline(t *testing.T) {
 
-	providers := []string{"github", "bitbucket", "bitbucket-server"}
+	providers := []string{"github", "bitbucket", "bitbucket-server", "stash"}
 
 	req := &converter.Request{
 		Build: drone.Build{},
@@ -33,8 +33,12 @@ func TestNewEmptyPipeline(t *testing.T) {
 		},
 	}
 
+	params := &Params{
+		Token: "invalidtoken",
+	}
+
 	for _, provider := range providers {
-		plugin := New("invalidtoken", provider, "", "", "")
+		plugin := New(provider, params)
 
 		config, err := plugin.Convert(noContext, req)
 		if err != nil {
@@ -73,7 +77,11 @@ this_is_invalid_yaml
 		},
 	}
 
-	plugin := New("invalidtoken", "", "", "", "")
+	params := &Params{
+		Token: "invalidtoken",
+	}
+
+	plugin := New("invalidtoken", params)
 
 	_, err := plugin.Convert(noContext, req)
 	if err == nil {
@@ -83,6 +91,7 @@ this_is_invalid_yaml
 }
 
 func TestNewUnsupportedProvider(t *testing.T) {
+
 	data := `
 kind: pipeline
 type: docker
@@ -98,6 +107,10 @@ steps:
       exclude:
       - .drone.yml
 `
+
+	params := &Params{
+		Token: "invalidtoken",
+	}
 
 	req := &converter.Request{
 		Build: drone.Build{
@@ -115,10 +128,15 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "unsupported", "", "", "")
+	plugin := New("unsupported", params)
 
 	_, err := plugin.Convert(noContext, req)
-	if err == nil {
+
+	// just looking for an error here isn't enough, since calling 'New' will always return
+	// an error during this test, because it can't authenticate with the provider
+	//
+	// therefore, look for the specific 'unsupported provided' error
+	if err.Error() != "unsupported provider" {
 		t.Error("unsupported provider did not return error")
 		return
 	}
@@ -148,6 +166,11 @@ steps:
       exclude:
       - .drone.yml
 `
+
+	params := &Params{
+		Token: "invalidtoken",
+	}
+
 	req := &converter.Request{
 		Build: drone.Build{
 			Before: "",
@@ -164,7 +187,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github", "", "", "")
+	plugin := New("github", params)
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -221,6 +244,11 @@ steps:
       include:
       - .drone.yml
 `
+
+	params := &Params{
+		Token: "invalidtoken",
+	}
+
 	req := &converter.Request{
 		Build: drone.Build{
 			Before: "",
@@ -237,7 +265,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github", "", "", "")
+	plugin := New("github", params)
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -291,6 +319,11 @@ steps:
       exclude:
       - .drone.yml
 `
+
+	params := &Params{
+		Token: "invalidtoken",
+	}
+
 	req := &converter.Request{
 		Build: drone.Build{
 			Before: "496eb80334e84085426ce681407d770cc9247acd",
@@ -307,7 +340,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github", "", "", "")
+	plugin := New("github", params)
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -364,6 +397,10 @@ steps:
       include:
       - .drone.yml
 `
+	params := &Params{
+		Token: "invalidtoken",
+	}
+
 	req := &converter.Request{
 		Build: drone.Build{
 			Before: "496eb80334e84085426ce681407d770cc9247acd",
@@ -380,7 +417,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "github", "", "", "")
+	plugin := New("github", params)
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -434,6 +471,13 @@ steps:
       exclude:
       - CONTRIBUTING.md
 `
+
+	params := &Params{
+		BitBucketUser:     "centauri",
+		BitBucketPassword: "kodan",
+		Token:             "invalidtoken",
+	}
+
 	req := &converter.Request{
 		Build: drone.Build{
 			Before: "",
@@ -450,7 +494,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "bitbucket", "", "", "")
+	plugin := New("bitbucket", params)
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
@@ -506,6 +550,12 @@ steps:
       exclude:
       - CONTRIBUTING.md
 `
+	params := &Params{
+		BitBucketUser:     "centauri",
+		BitBucketPassword: "kodan",
+		Token:             "invalidtoken",
+	}
+
 	req := &converter.Request{
 		Build: drone.Build{
 			Before: "dec26e0fe887167743c2b7e36531dedfeb6cd478",
@@ -522,7 +572,7 @@ steps:
 		},
 	}
 
-	plugin := New("invalidtoken", "bitbucket", "", "", "")
+	plugin := New("bitbucket", params)
 
 	config, err := plugin.Convert(noContext, req)
 	if err != nil {
