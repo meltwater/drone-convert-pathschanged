@@ -1,3 +1,15 @@
+## 1.0.0
+
+### Breaking changes
+- [#79](https://github.com/meltwater/drone-convert-pathschanged/pull/79) shift to drone/go-scm library support
+
+### Added
+- [#83](https://github.com/meltwater/drone-convert-pathschanged/pull/83) add missing environnment variable to stash (bitbucket-server) example
+- [#77](https://github.com/meltwater/drone-convert-pathschanged/pull/77) add bitbucket cloud support
+- [#76](https://github.com/meltwater/drone-convert-pathschanged/pull/76) golang module updates
+- [#74](https://github.com/meltwater/drone-convert-pathschanged/pull/74) update drone/go and drone/go-scm modules
+- [#73](https://github.com/meltwater/drone-convert-pathschanged/pull/74) golang tidy
+
 ## 0.6.0
 ### Added
 - [#72](https://github.com/meltwater/drone-convert-pathschanged/pull/72) add GitHub Server support
