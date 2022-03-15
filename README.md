@@ -7,7 +7,8 @@ _Please note this project requires Drone server version 1.4 or higher._
 
 ## Installation
 
-## Github
+## Github Cloud
+
 1. Create a github token via https://github.com/settings/tokens with the scope of`repo` (see [issue 13](https://github.com/meltwater/drone-convert-pathschanged/issues/13) for background).
 
 2. Create a shared secret:
@@ -69,9 +70,7 @@ DRONE_CONVERT_PLUGIN_ENDPOINT=http://1.2.3.4:3000
 DRONE_CONVERT_PLUGIN_SECRET=bea26a2221fd8090ea38720fc445eca6
 ```
 
-## Bitbucket
-
-_Bitbucket support is currently considered experimental_
+## Bitbucket Cloud
 
 1.  Create an "App password" via https://bitbucket.org/account/settings/app-passwords and select only "Read" under "Repositories"
 
