@@ -103,11 +103,9 @@ DRONE_CONVERT_PLUGIN_ENDPOINT=http://1.2.3.4:3000
 DRONE_CONVERT_PLUGIN_SECRET=bea26a2221fd8090ea38720fc445eca6
 ```
 
-## Bitbucket Server
+## Stash (Bitbucket Server)
 
-_Bitbucket Server support is currently considered experimental_
-
-1. Create a BitBucket access token via https://your-bitbucket-address/plugins/servlet/access-tokens/manage with read-only rights
+1. Create a Stash access token via https://your-bitbucket-address/plugins/servlet/access-tokens/manage with read-only rights
 
 2. Create a shared secret:
 
@@ -125,7 +123,7 @@ $ docker run -d \
   --env=DRONE_SECRET=bea26a2221fd8090ea38720fc445eca6 \
   --env=TOKEN=9e6eij3ckzvpe9mrhnqcis6zf8dhopmm46e3pi96 \
   --env=PROVIDER=bitbucket-server \
-  --env=BB_ADDRESS=https://your-bitbucket-server-address
+  --env=STASH_SERVER=https://your-bitbucket-server-address
   --restart=always \
   --name=converter meltwater/drone-convert-pathschanged
 ```
