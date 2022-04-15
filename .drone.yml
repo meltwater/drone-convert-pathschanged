@@ -100,9 +100,22 @@ steps:
     - push
     - tag
 
+# trigger:
+#   branch:
+#   - master
+
 trigger:
-  branch:
-  - master
+  event:
+    - push
+  paths:
+    include:
+      - .golangci.yml
+
+steps:
+- name: run linter
+  image: golangci/golangci-lint:v1.45-alpine
+  commands:
+    - golangci-lint run
 
 ---
 kind: signature
