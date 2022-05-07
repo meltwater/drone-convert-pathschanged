@@ -43,7 +43,7 @@ func GetGiteeFilesChanged(repo drone.Repo, build drone.Build, username, password
 	}
 
 	if res.StatusCode != 200 {
-		fmt.Println("Fatal error ", res.StatusCode)
+		fmt.Println(fmt.Sprintf("Fatal error : res.StatusCode is %d, username is %s, password is %s, client_id is %s, client_secret is %s, scope is %s", res.StatusCode, username, password, clientID, clientSecret, scope))
 		return nil, err
 	}
 
