@@ -27,6 +27,11 @@ type (
 		GithubServer      string
 		StashServer       string
 		Token             string
+		GiteeUser         string
+		GiteePassword     string
+		GiteeClientID     string
+		GiteeClientSecret string
+		Scope             string
 	}
 
 	plugin struct {
@@ -167,6 +172,11 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 			}
 		case "stash":
 			changedFiles, err = providers.GetStashFilesChanged(req.Repo, req.Build, p.params.StashServer, p.params.Token, scm.ListOptions{})
+			if err != nil {
+				return nil, err
+			}
+		case "gitee":
+			changedFiles, err = providers.GetGiteeFilesChanged(req.Repo, req.Build, p.params.GiteeUser, p.params.GiteePassword, p.params.GiteeClientID, p.params.GiteeClientSecret, p.params.Scope)
 			if err != nil {
 				return nil, err
 			}

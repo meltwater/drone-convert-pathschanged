@@ -34,6 +34,11 @@ type (
 		BitBucketPassword string `envconfig:"BITBUCKET_PASSWORD"`
 		GithubServer      string `envconfig:"GITHUB_SERVER"`
 		StashServer       string `envconfig:"STASH_SERVER"`
+		GiteeUser         string `envconfig:"GITEE_USER"`
+		GiteePassword     string `envconfig:"GITEE_PASSWORD"`
+		GiteeClientID     string `envconfig:"GITEE_CLIENT_ID"`
+		GiteeClientSecret string `envconfig:"GITEE_CLIENT_SECRET"`
+		Scope             string `envconfig:"SCOPE"`
 	}
 )
 
@@ -59,6 +64,7 @@ func validate(spec *spec) error {
 			"bitbucket-server",
 			"github",
 			"stash",
+			"gitee",
 		}
 		if !contains(providers, spec.Provider) {
 			return fmt.Errorf("unsupported provider")
@@ -84,6 +90,22 @@ func validate(spec *spec) error {
 	}
 	if spec.StashServer == "" && spec.Provider == "stash" {
 		return fmt.Errorf("missing stash server")
+	}
+
+	if spec.GiteeUser == "" && spec.Provider == "gitee" {
+		return fmt.Errorf("missing gitee user")
+	}
+	if spec.GiteePassword == "" && spec.Provider == "gitee" {
+		return fmt.Errorf("missing gitee password")
+	}
+	if spec.GiteeClientID == "" && spec.Provider == "gitee" {
+		return fmt.Errorf("missing gitee client id")
+	}
+	if spec.GiteeClientSecret == "" && spec.Provider == "gitee" {
+		return fmt.Errorf("missing gitee client secret")
+	}
+	if spec.Scope == "" && spec.Provider == "gitee" {
+		return fmt.Errorf("missing gitee scope")
 	}
 
 	return nil

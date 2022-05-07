@@ -159,3 +159,22 @@ func TestValidateStashServerMissing(t *testing.T) {
 		t.Errorf("wanted %s, got %s", want, got)
 	}
 }
+
+func TestValidateGiteeMissing(t *testing.T) {
+	s := &spec{
+		Secret:            "abcdefg",
+		Provider:          "gitee",
+		GiteeUser:         "",
+		GiteePassword:     "abcdefg",
+		GiteeClientID:     "abcdefg",
+		GiteeClientSecret: "abcdefg",
+		Scope:             "abcdefg",
+	}
+
+	got := validate(s)
+
+	want := "missing gitee user"
+	if got.Error() != want {
+		t.Errorf("wanted %s, got %s", want, got)
+	}
+}
