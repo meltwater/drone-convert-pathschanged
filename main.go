@@ -34,11 +34,6 @@ type (
 		BitBucketPassword string `envconfig:"BITBUCKET_PASSWORD"`
 		GithubServer      string `envconfig:"GITHUB_SERVER"`
 		StashServer       string `envconfig:"STASH_SERVER"`
-		GiteeUser         string `envconfig:"GITEE_USER"`
-		GiteePassword     string `envconfig:"GITEE_PASSWORD"`
-		GiteeClientID     string `envconfig:"GITEE_CLIENT_ID"`
-		GiteeClientSecret string `envconfig:"GITEE_CLIENT_SECRET"`
-		Scope             string `envconfig:"SCOPE"`
 	}
 )
 
@@ -92,22 +87,6 @@ func validate(spec *spec) error {
 		return fmt.Errorf("missing stash server")
 	}
 
-	if spec.GiteeUser == "" && spec.Provider == "gitee" {
-		return fmt.Errorf("missing gitee user")
-	}
-	if spec.GiteePassword == "" && spec.Provider == "gitee" {
-		return fmt.Errorf("missing gitee password")
-	}
-	if spec.GiteeClientID == "" && spec.Provider == "gitee" {
-		return fmt.Errorf("missing gitee client id")
-	}
-	if spec.GiteeClientSecret == "" && spec.Provider == "gitee" {
-		return fmt.Errorf("missing gitee client secret")
-	}
-	if spec.Scope == "" && spec.Provider == "gitee" {
-		return fmt.Errorf("missing gitee scope")
-	}
-
 	return nil
 }
 
@@ -142,11 +121,6 @@ func main() {
 		GithubServer:      spec.GithubServer,
 		Token:             spec.Token,
 		StashServer:       spec.StashServer,
-		GiteeUser:         spec.GiteeUser,
-		GiteePassword:     spec.GiteePassword,
-		GiteeClientID:     spec.GiteeClientID,
-		GiteeClientSecret: spec.GiteeClientSecret,
-		Scope:             spec.Scope,
 	}
 
 	handler := converter.Handler(
