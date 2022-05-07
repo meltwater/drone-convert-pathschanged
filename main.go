@@ -142,6 +142,11 @@ func main() {
 		GithubServer:      spec.GithubServer,
 		Token:             spec.Token,
 		StashServer:       spec.StashServer,
+		GiteeUser:         spec.GiteeUser,
+		GiteePassword:     spec.GiteePassword,
+		GiteeClientID:     spec.GiteeClientID,
+		GiteeClientSecret: spec.GiteeClientSecret,
+		Scope:             spec.Scope,
 	}
 
 	handler := converter.Handler(
