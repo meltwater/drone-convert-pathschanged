@@ -27,11 +27,6 @@ type (
 		GithubServer      string
 		StashServer       string
 		Token             string
-		GiteeUser         string
-		GiteePassword     string
-		GiteeClientID     string
-		GiteeClientSecret string
-		Scope             string
 	}
 
 	plugin struct {

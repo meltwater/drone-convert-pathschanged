@@ -87,6 +87,10 @@ func validate(spec *spec) error {
 		return fmt.Errorf("missing stash server")
 	}
 
+	if spec.Token == "" && spec.Provider == "gitee" {
+		return fmt.Errorf("missing gitee token")
+	}
+
 	return nil
 }
 
