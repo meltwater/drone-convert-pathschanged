@@ -125,6 +125,10 @@ $ docker run -d \
   --restart=always \
   --name=converter meltwater/drone-convert-pathschanged
 ```
+Stash APIs are paginated and by default will only return 25 changes when computing the changeset. Set environment variable STASH_PAGE_SIZE to a higher number on the plugin to avoid partial change set detection.
+```console
+--env=STASH_PAGE_SIZE=1000
+```
 
 4. Update your Drone server configuration to include the plugin address and the shared secret.
 

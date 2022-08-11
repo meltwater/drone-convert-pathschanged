@@ -27,6 +27,7 @@ type (
 		GithubServer      string
 		StashServer       string
 		Token             string
+		StashPageSize     int
 	}
 
 	plugin struct {
@@ -166,7 +167,11 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 				return nil, err
 			}
 		case "stash":
-			changedFiles, err = providers.GetStashFilesChanged(req.Repo, req.Build, p.params.StashServer, p.params.Token, scm.ListOptions{})
+			listOptions := scm.ListOptions{}
+			if p.params.StashPageSize > 0 {
+				listOptions.Size = p.params.StashPageSize
+			}
+			changedFiles, err = providers.GetStashFilesChanged(req.Repo, req.Build, p.params.StashServer, p.params.Token, listOptions)
 			if err != nil {
 				return nil, err
 			}
