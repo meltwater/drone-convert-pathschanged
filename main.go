@@ -59,6 +59,7 @@ func validate(spec *spec) error {
 			"bitbucket-server",
 			"github",
 			"stash",
+			"gitee",
 		}
 		if !contains(providers, spec.Provider) {
 			return fmt.Errorf("unsupported provider")
@@ -84,6 +85,10 @@ func validate(spec *spec) error {
 	}
 	if spec.StashServer == "" && spec.Provider == "stash" {
 		return fmt.Errorf("missing stash server")
+	}
+
+	if spec.Token == "" && spec.Provider == "gitee" {
+		return fmt.Errorf("missing gitee token")
 	}
 
 	return nil

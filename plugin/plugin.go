@@ -170,6 +170,11 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 			if err != nil {
 				return nil, err
 			}
+		case "gitee":
+			changedFiles, err = providers.GetGiteeFilesChanged(req.Repo, req.Build, p.params.Token)
+			if err != nil {
+				return nil, err
+			}
 		default:
 			requestLogger.Errorln("unsupported provider:", p.provider)
 			return nil, errors.New("unsupported provider")
