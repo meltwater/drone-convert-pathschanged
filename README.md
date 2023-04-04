@@ -29,6 +29,12 @@ $ docker run -d \
   --restart=always \
   --name=converter meltwater/drone-convert-pathschanged
 ```
+If you wish to use an enviroment file you can pass it when starting the container :
+```console
+$ docker run -d \
+...
+  --name=converter meltwater/drone-convert-pathschanged --envfile drone.env
+```
 
 4. Update your Drone server configuration to include the plugin address and the shared secret.
 
