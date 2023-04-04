@@ -5,6 +5,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 	"github.com/meltwater/drone-convert-pathschanged/plugin"
 
 	"github.com/drone/drone-go/plugin/converter"
+	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -95,6 +97,11 @@ func validate(spec *spec) error {
 }
 
 func main() {
+	envfilepath := flag.String("envfile", "", "pass filepath to env file (optional)")
+	flag.Parse()
+	if *envfilepath != "" {
+		godotenv.Load(*envfilepath)
+	}
 	spec := new(spec)
 	err := envconfig.Process("", spec)
 	if err != nil {
