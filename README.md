@@ -172,7 +172,7 @@ DRONE_CONVERT_PLUGIN_SECRET=bea26a2221fd8090ea38720fc445eca6
 
 ## Examples
 
-This extension uses [doublestar](https://github.com/bmatcuk/doublestar) for matching paths changed in your commit range, refer to their documentation for all supported patterns.
+This extension uses [doublestar (v1)](https://github.com/bmatcuk/doublestar/tree/v1) for matching paths changed in your commit range, refer to their documentation for all supported patterns.
 
 ### `include`
 
