@@ -1,3 +1,8 @@
+## Unreleased
+
+### Added
+- [#89](https://github.com/meltwater/drone-convert-pathschanged/issues/89) add environment variable to allow stash users to specify page size of git compare changes
+
 ## 1.0.0
 
 ### Breaking changes

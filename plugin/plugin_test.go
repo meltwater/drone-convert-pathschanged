@@ -605,3 +605,64 @@ name: default
 		t.Log(diff)
 	}
 }
+
+func TestStashPageSizeSetWhenConfigured(t *testing.T) {
+	gock.New("http://example.com:7990").
+		Get("/rest/api/1.0/projects/PRJ/repos/my-repo/compare/changes").
+		MatchParam("from", "4f4b0ef1714a5b6cafdaf2f53c7f5f5b38fb9348").
+		MatchParam("to", "131cb13f4aed12e725177bc4b7c28db67839bf9f").
+		MatchParam("limit", "40"). //this will resolve only if the configured page size was honoured
+		Reply(200).
+		Type("application/json").
+		File("../providers/testdata/stash/compare.json")
+
+	before := `
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: message
+  image: busybox
+  commands:
+  - echo "This step will be excluded when .drone.yml is changed"
+  when:
+    paths:
+      exclude:
+      - .drone.yml
+`
+	params := &Params{
+		StashServer:   "http://example.com:7990",
+		Token:         "invalidtoken",
+		StashPageSize: 40,
+	}
+
+	req := &converter.Request{
+		Build: drone.Build{
+			Before: "4f4b0ef1714a5b6cafdaf2f53c7f5f5b38fb9348",
+			After:  "131cb13f4aed12e725177bc4b7c28db67839bf9f",
+		},
+		Config: drone.Config{
+			Data: before,
+		},
+		Repo: drone.Repo{
+			Namespace: "repos",
+			Name:      "my-repo",
+			Slug:      "PRJ/my-repo",
+			Config:    ".drone.yml",
+		},
+	}
+
+	plugin := New("stash", params)
+
+	config, err := plugin.Convert(noContext, req)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if config == nil { //we are not interested in transformation, only validating limit was set on the request to stash and resolved to gock
+		t.Errorf("Unexpected Results")
+	}
+
+}

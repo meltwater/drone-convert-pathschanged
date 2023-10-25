@@ -36,6 +36,7 @@ type (
 		BitBucketPassword string `envconfig:"BITBUCKET_PASSWORD"`
 		GithubServer      string `envconfig:"GITHUB_SERVER"`
 		StashServer       string `envconfig:"STASH_SERVER"`
+		StashPageSize     int    `envconfig:"STASH_PAGE_SIZE"` //bumps the rest api page size for changeset detection. Picks only 25 changes if unspecified
 	}
 )
 
@@ -132,6 +133,7 @@ func main() {
 		GithubServer:      spec.GithubServer,
 		Token:             spec.Token,
 		StashServer:       spec.StashServer,
+		StashPageSize:     spec.StashPageSize,
 	}
 
 	handler := converter.Handler(
