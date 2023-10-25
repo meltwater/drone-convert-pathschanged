@@ -5,7 +5,7 @@ name: default
 
 steps:
 - name: test
-  image: golang:1.15
+  image: golang:1.17
   commands:
   - go test -coverprofile=cover.out -v ./...
   - go tool cover -func=cover.out
@@ -16,7 +16,7 @@ steps:
     - tag
 
 - name: build
-  image: golang:1.15
+  image: golang:1.17
   commands:
   - sh scripts/build.sh
   when:
