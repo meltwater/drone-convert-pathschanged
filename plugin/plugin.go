@@ -25,6 +25,7 @@ type (
 		BitBucketUser     string
 		BitBucketPassword string
 		GithubServer      string
+		GitlabServer      string
 		StashServer       string
 		Token             string
 	}
@@ -157,6 +158,11 @@ func (p *plugin) Convert(ctx context.Context, req *converter.Request) (*drone.Co
 		switch p.provider {
 		case "github":
 			changedFiles, err = providers.GetGithubFilesChanged(req.Repo, req.Build, p.params.Token, p.params.GithubServer)
+			if err != nil {
+				return nil, err
+			}
+		case "gitlab":
+			changedFiles, err = providers.GetGitLabFilesChanged(req.Repo, req.Build, p.params.Token, p.params.GitlabServer)
 			if err != nil {
 				return nil, err
 			}

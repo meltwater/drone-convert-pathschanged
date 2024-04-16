@@ -75,6 +75,39 @@ DRONE_CONVERT_PLUGIN_ENDPOINT=http://1.2.3.4:3000
 DRONE_CONVERT_PLUGIN_SECRET=bea26a2221fd8090ea38720fc445eca6
 ```
 
+
+## Gitlab Server
+
+1. Create a github token via https://your-github-server-address/profile/personal_access_tokens with the scope of `repo`
+
+2. Create a shares secret:
+
+```console
+$ openssl rand -hex 16
+f9b759a35620876fb46f42dffdc7d25b
+```
+
+3. Download ran run the plugin:
+
+```console
+$ docker run -d \
+  --publish=3000:3000 \
+  --env=DRONE_DEBUG=true \
+  --env=DRONE_SECRET=f9b759a35620876fb46f42dffdc7d25b \
+  --env=TOKEN=9e6eij3ckzvpe9mrhnqcis6zf8dhopmm46e3pi96 \
+  --env=PROVIDER=gitlab \
+  --env=GITLAB_SERVER=https://your-gitlab-server-address
+  --restart=always \
+  --name=converter meltwater/drone-convert-pathschanged
+```
+
+4. Update your Drone server configuration to include the plugin address and the shared secret.
+
+```text
+DRONE_CONVERT_PLUGIN_ENDPOINT=http://1.2.3.4:3000
+DRONE_CONVERT_PLUGIN_SECRET=f9b759a35620876fb46f42dffdc7d25b
+```
+
 ## Bitbucket Cloud
 
 1.  Create an "App password" via https://bitbucket.org/account/settings/app-passwords and select only "Read" under "Repositories"
