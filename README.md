@@ -1,4 +1,7 @@
-# Drone Conversion Extension: Paths Changed | [![Build Status](https://cloud.drone.io/api/badges/meltwater/drone-convert-pathschanged/status.svg)](https://cloud.drone.io/meltwater/drone-convert-pathschanged) [![Docker Pulls](https://img.shields.io/docker/pulls/meltwater/drone-convert-pathschanged)](https://hub.docker.com/r/meltwater/drone-convert-pathschanged)
+# ⚠️ Deprecation Warning ⚠️
+This repository has been deprecated and will no longer be maintained.
+
+# Drone Conversion Extension: Paths Changed | [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
 A [Drone](https://drone.io/) [conversion extension](https://docs.drone.io/extensions/conversion/) to include/exclude pipelines and steps based on paths changed.
 
